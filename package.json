@@ -1,0 +1,29 @@
+{
+  "name": "simulador-egel-backend",
+  "version": "1.0.0",
+  "description": "Backend para simulador de egel",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "server": "nodemon ./src/app.js"
+  },
+  "author": "Jahir Alberto Samperio",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "cloudinary": "^2.5.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.12.0",
+    "sequelize": "^6.37.5"
+  }
+}
