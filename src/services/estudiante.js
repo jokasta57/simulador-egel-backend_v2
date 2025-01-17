@@ -9,7 +9,7 @@ export const crearEstudianteService = async({nombre, apellido_paterno, email, nu
             return {
                 ok: false,
                 status: 409,
-                msg: "Este usuario ya existe"
+                msg: "El número de cuenta ya está registrado. Por favor, verifique sus datos."
             }
         }
         //Crear nuevo estudiante
