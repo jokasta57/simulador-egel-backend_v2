@@ -3,13 +3,12 @@ import { crearEstudianteService, loginEstudianteService } from "../services/estu
 export const crearEstudiante = async (req, res) => {
     try {
         //req.body es enviado como data
-        const { status, ok, msg, admin } = await crearEstudianteService(req.body);
+        const { status, ok, msg, estudiante } = await crearEstudianteService(req.body);
 
         res.status(status).json({
             ok,
             msg,
-            uid: admin?.id_admin,
-            nombre: admin?.nombre
+            estudiante
         })
 
 
@@ -17,7 +16,7 @@ export const crearEstudiante = async (req, res) => {
         console.log(error);
         res.status(500).json({
             ok: false,
-            msg: "Error en el servidor"
+            msg: "Error en el servidor",
         })
     }
 }

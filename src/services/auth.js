@@ -68,7 +68,8 @@ export const loginService = async( numero_identificacion, nip) => {
             ok: true,
             status: 200,
             msg: 'Usuario autenticado exitosamente',
-            token
+            token,
+            admin
         }
 
 

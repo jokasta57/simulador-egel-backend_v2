@@ -1,0 +1,25 @@
+import { DataTypes } from "sequelize";
+import conexion from "../database/database.js";
+
+const Pregunta = conexion.define('pregunta', {
+    id_pregunta: {
+        type: DataTypes.INTEGER, 
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true, // Añadido para autoincremento
+    },
+    id_examen: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    contenido: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    imagen_url: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+});
+
+export default Pregunta;
