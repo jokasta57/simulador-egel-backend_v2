@@ -61,8 +61,9 @@ export const loginService = async( numero_identificacion, nip) => {
             }
         }
 
+        const role = 'admin'
         //Generar JWT
-        const token = await generarJWT(admin.id_admin, admin.nombre);
+        const token = await generarJWT(admin.id_admin, admin.nombre, role);
 
         return {
             ok: true,
