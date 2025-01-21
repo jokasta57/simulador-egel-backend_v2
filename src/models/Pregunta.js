@@ -17,8 +17,7 @@ const Pregunta = conexion.define('pregunta', {
         allowNull: false
     },
     imagen_url: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING
     }
 });
 
