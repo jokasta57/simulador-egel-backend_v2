@@ -17,8 +17,7 @@ const Opcion = conexion.define('opcion', {
         allowNull: false
     },
     imagen_url: {
-        type: DataTypes.TEXT,
-        allowNull: false
+        type: DataTypes.TEXT
     },
     es_correcta: {
         type: DataTypes.BOOLEAN,

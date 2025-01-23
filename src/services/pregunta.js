@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { Pregunta } from "../models/asosiaciones.js";
+import { Pregunta } from "../models/asociaciones.js";
 import { eliminarCloudinary, subirCloudinary } from "../uploads/cloudinary.js";
 
 export const crearPreguntaService = async(id_examen, contenido, imagen) => {
