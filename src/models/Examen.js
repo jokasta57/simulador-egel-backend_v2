@@ -31,6 +31,9 @@ const Examen = conexion.define('examen', {
     estado: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    area: {
+        type: DataTypes.STRING
     }
 });
 
