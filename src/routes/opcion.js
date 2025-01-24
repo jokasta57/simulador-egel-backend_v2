@@ -2,7 +2,7 @@ import {Router} from 'express';
 import { crearOpcionValidators } from '../middlewares/validators/opcion.js';
 import { errorHandlingImages } from '../middlewares/errors/multerErrorHandler.js';
 import { validarJWT, validarRol } from '../middlewares/validar-jwt.js';
-import { crearOpcion } from '../controllers/opcion.js';
+import { crearOpcion, eliminarOpcion, editarOpcion, eliminarImagenOpcion } from '../controllers/opcion.js';
 
 const router = Router();
 
@@ -16,8 +16,10 @@ router.use(validarRol(['admin']));
 
 router.post('/', errorHandlingImages, crearOpcionValidators, crearOpcion);
 
-// router.put('/:id', errorHandlingImages, editarPregunta);
+router.put('/:id', errorHandlingImages, editarOpcion);
 
-// router.delete('/:id', eliminarPregunta);
+router.put('/imagen/:id', eliminarImagenOpcion);
+
+router.delete('/:id', eliminarOpcion);
 
 export default router;  

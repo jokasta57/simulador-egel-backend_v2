@@ -18,7 +18,11 @@ const Pregunta = conexion.define('pregunta', {
     },
     imagen_url: {
         type: DataTypes.STRING
-    }
+    },
+    public_id_imagen: DataTypes.TEXT,
+    orden: {
+        type: DataTypes.INTEGER
+    },
 });
 
 export default Pregunta;
