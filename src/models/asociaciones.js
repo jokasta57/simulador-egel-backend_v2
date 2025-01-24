@@ -5,7 +5,7 @@ import Pregunta from "./Pregunta.js";
 Examen.hasMany(Pregunta, {foreignKey: 'id_examen'});
 Pregunta.belongsTo(Examen, {foreignKey: 'id_examen'});
 
-Pregunta.hasMany(Opcion, {foreignKey: 'id_pregunta'})
+Pregunta.hasMany(Opcion, {foreignKey: 'id_pregunta', as: 'opcion'})
 Opcion.belongsTo(Pregunta, {foreignKey: 'id_pregunta'});
 
 export {

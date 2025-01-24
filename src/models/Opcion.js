@@ -16,13 +16,12 @@ const Opcion = conexion.define('opcion', {
         type: DataTypes.TEXT,
         allowNull: false
     },
-    imagen_url: {
-        type: DataTypes.TEXT
-    },
+    imagen_url: DataTypes.TEXT,
     es_correcta: {
         type: DataTypes.BOOLEAN,
         allowNull: false
-    }
+    },
+    public_id_imagen: DataTypes.TEXT,
 });
 
 export default Opcion;

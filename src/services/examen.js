@@ -39,3 +39,67 @@ export const crearExamenService = async({carrera, nombre, periodo, duracion}) =>
         };
     }
 }
+
+export const obtenerExamenService = async() => {
+    try {
+        
+        const examenes = await Examen.findAll();
+
+        if(!examenes) {
+            return {
+                ok: false,
+                status: 404,
+                msg: 'No hay exámenes disponibles',
+                examenes: null
+            }
+        }
+
+
+        return {
+            ok: true, 
+            status: 201,
+            msg: null,
+            examenes
+        };
+
+    } catch (error) {
+        console.log(error);
+        return {
+            ok: false,
+            status: 500,
+            msg: 'Error en el servidor'
+        };
+    }
+}
+
+export const obtenerExamenPorIdService = async(id) => {
+    try {
+        
+        const examen = await Examen.findByPk(id);
+
+        if(!examen) {
+            return {
+                ok: false,
+                status: 404,
+                msg: 'Este examen no existe',
+                examen: null
+            }
+        }
+
+
+        return {
+            ok: true, 
+            status: 201,
+            msg: null,
+            examen
+        };
+
+    } catch (error) {
+        console.log(error);
+        return {
+            ok: false,
+            status: 500,
+            msg: 'Error en el servidor'
+        };
+    }
+}

@@ -1,13 +1,57 @@
-import { crearPreguntaService, editarPreguntaService, eliminarPreguntaService } from "../services/pregunta.js";
+import { crearPreguntaService, editarPreguntaService, eliminarPreguntaService, eliminarImagenPreguntaService, obtenerPreguntaPorIdService, obtenerPreguntaPorOrdenService } from "../services/pregunta.js";
 
 export const crearPregunta = async (req, res) => {
     try {
         //req.body es enviado como data
-        const { id_examen } = req.query;
+        const { id_examen, orden } = req.query;
         const { contenido } = req.body;
         const imagen = req.file;
 
-        const { status, ok, msg, pregunta } = await crearPreguntaService(id_examen, contenido, imagen);
+        const { status, ok, msg, pregunta } = await crearPreguntaService(id_examen, orden, contenido, imagen);
+
+        res.status(status).json({
+            ok,
+            msg,
+            pregunta
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: "Error en el servidor",
+        })
+    }
+}
+
+export const obtenerPreguntaPorId = async (req, res) => {
+    try {
+        //req.body es enviado como data
+        const { id } = req.params;
+
+        const { status, ok, msg, pregunta } = await obtenerPreguntaPorIdService(id);
+
+        res.status(status).json({
+            ok,
+            msg,
+            pregunta
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: "Error en el servidor",
+        })
+    }
+}
+
+export const obtenerPreguntaPorOrden = async (req, res) => {
+    try {
+        //req.body es enviado como data
+        const { orden } = req.query;
+
+        const { status, ok, msg, pregunta } = await obtenerPreguntaPorOrdenService(orden);
 
         res.status(status).json({
             ok,
@@ -33,12 +77,35 @@ export const editarPregunta = async (req, res) => {
         if(!id) return res.status(400).json({ok: false, msg: 'No hay ID en la peticion'})
 
 
-        const { status, ok, msg } = await editarPreguntaService(id, contenido, imagen);
+        const { status, ok, msg, pregunta } = await editarPreguntaService(id, contenido, imagen);
 
         res.status(status).json({
             ok,
             msg,
             pregunta
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: "Error en el servidor",
+        })
+    }
+}
+
+export const eliminarImagenPregunta = async (req, res) => {
+    //req.body es enviado como data
+    const { id } = req.params;
+    if(!id) return res.status(400).json({ok: false, msg: 'No hay ID en la peticion'})
+    
+    try {
+
+        const { status, ok, msg } = await eliminarImagenPreguntaService(id);
+
+        res.status(status).json({
+            ok,
+            msg
         })
 
     } catch (error) {

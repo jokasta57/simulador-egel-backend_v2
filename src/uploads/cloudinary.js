@@ -29,7 +29,8 @@ export const subirCloudinary = async (recurso, folder) => {
                                 ok: true,
                                 status: 200,
                                 msg: null,
-                                url_recurso: result.secure_url
+                                url_recurso: result.secure_url,
+                                public_id: result.public_id
                             });
                         }
                     }
@@ -58,11 +59,9 @@ export const subirCloudinary = async (recurso, folder) => {
     }
 }
 
-export const eliminarCloudinary = async (url) => {
+export const eliminarCloudinary = async (publicId) => {
     try {
-        const publicId = obtenerPublicId(url);
         await cloudinary.uploader.destroy(publicId);
-
     } catch (error) {
         return {
             ok: false,
@@ -70,10 +69,4 @@ export const eliminarCloudinary = async (url) => {
             msg: 'Error en el servidor'
         }
     }
-}
-
-const obtenerPublicId = (url) => {
-    const regex = /upload\/(?:v\d+\/)?(.+)\.\w+$/; // Extrae después de 'upload/' y antes de la extensión
-    const match = url.match(regex);
-    return match ? match[1] : null;
 }
