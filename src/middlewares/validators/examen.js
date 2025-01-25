@@ -3,8 +3,9 @@ import { validarCampos } from './validarCampos.js';
 
 export const crearExamenValidators =  [  //Middlewares
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-    check('carrera', 'El apellido paterno es obligatorio').not().isEmpty(),
-    check('periodo', 'El email es obligatorio y debe ser válido').not().isEmpty(),
-    check('duracion', 'El número de cuenta es obligatorio y debe ser único').not().isEmpty(),
+    check('carrera', 'La carrera es obligatoria').not().isEmpty(),
+    check('periodo', 'El periodo es obligatorio').not().isEmpty(),
+    check('duracion', 'La duración del examen es obligatoria').not().isEmpty(),
+    check('area', 'El area es obligatorio').not().isEmpty(),
     validarCampos
 ];

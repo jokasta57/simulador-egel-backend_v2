@@ -1,4 +1,4 @@
-import { crearPreguntaService, editarPreguntaService, eliminarPreguntaService, eliminarImagenPreguntaService, obtenerPreguntaPorIdService, obtenerPreguntaPorOrdenService } from "../services/pregunta.js";
+import { crearPreguntaService, editarPreguntaService, eliminarPreguntaService, eliminarImagenPreguntaService, obtenerPreguntaPorIdService, obtenerPreguntaPorOrdenService, obtenerPreguntaPorExamenService } from "../services/pregunta.js";
 
 export const crearPregunta = async (req, res) => {
     try {
@@ -49,14 +49,35 @@ export const obtenerPreguntaPorId = async (req, res) => {
 export const obtenerPreguntaPorOrden = async (req, res) => {
     try {
         //req.body es enviado como data
-        const { orden } = req.query;
+        const { orden, id_examen } = req.query;
 
-        const { status, ok, msg, pregunta } = await obtenerPreguntaPorOrdenService(orden);
+        const { status, ok, msg, pregunta } = await obtenerPreguntaPorOrdenService(orden, id_examen);
 
         res.status(status).json({
             ok,
             msg,
             pregunta
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: "Error en el servidor",
+        })
+    }
+}
+export const obtenerPreguntaPorExamen = async (req, res) => {
+    try {
+        //req.body es enviado como data
+        const { id } = req.params;
+
+        const { status, ok, msg, preguntas } = await obtenerPreguntaPorExamenService(id);
+
+        res.status(status).json({
+            ok,
+            msg,
+            preguntas
         })
 
     } catch (error) {

@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { crearExamen, obtenerExamen, obtenerExamenPorId } from '../controllers/examen.js';
+import { crearExamen, obtenerExamen, obtenerExamenPorId, editarExamen } from '../controllers/examen.js';
 import { crearExamenValidators } from '../middlewares/validators/examen.js';
 import { validarJWT, validarRol } from '../middlewares/validar-jwt.js';
 
@@ -9,6 +9,8 @@ const router = Router();
 router.use( validarJWT );
 
 router.post('/', validarRol(['admin']), crearExamenValidators, crearExamen);
+
+router.put('/:id', validarRol(['admin']), crearExamenValidators, editarExamen);
 
 router.get('/', validarRol(['admin']), obtenerExamen);
 
