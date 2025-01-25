@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import Examen from "../models/Examen.js";
 
 
@@ -27,6 +28,47 @@ export const crearExamenService = async({carrera, nombre, periodo, duracion}) =>
             ok: true, 
             status: 201,
             msg: "Examen guardado exitosamente",
+            examen
+        };
+
+    } catch (error) {
+        console.log(error);
+        return {
+            ok: false,
+            status: 500,
+            msg: 'Error en el servidor'
+        };
+    }
+}
+
+export const editarExamenService = async(updateInfo, id_examen) => {
+    try {
+        const examen = await Examen.findByPk(id_examen)
+
+        const fecha = new Date();
+        updateInfo.fecha_modificacion = fecha;
+        //Verificar que no haya duplicados
+        const nombreDisponible = await Examen.findOne({ 
+            where: { 
+                nombre: examen.nombre,
+                id_examen: { [Op.ne]: id_examen } // Asegura que no sea la misma pregunta
+            } 
+        });
+
+        if (nombreDisponible) {
+            return {
+                ok: false,
+                status: 409,
+                msg: "Ya existe un examen con este título."
+            }
+        }
+        //Crear nuevo estudiante
+        await Examen.update(updateInfo, {where: {id_examen}})
+
+        return {
+            ok: true, 
+            status: 201,
+            msg: "Examen actualizado exitosamente",
             examen
         };
 

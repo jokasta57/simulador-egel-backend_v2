@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import { crearPreguntaValidators } from '../middlewares/validators/pregunta.js';
-import { crearPregunta, editarPregunta, eliminarPregunta, eliminarImagenPregunta, obtenerPreguntaPorId, obtenerPreguntaPorOrden } from '../controllers/pregunta.js';
+import { crearPregunta, editarPregunta, eliminarPregunta, eliminarImagenPregunta, obtenerPreguntaPorId, obtenerPreguntaPorOrden, obtenerPreguntaPorExamen } from '../controllers/pregunta.js';
 import { errorHandlingImages } from '../middlewares/errors/multerErrorHandler.js';
 import { validarJWT, validarRol } from '../middlewares/validar-jwt.js';
 
@@ -12,6 +12,8 @@ router.use( validarJWT );
 router.get('/id/:id', validarRol(['admin', 'estudiante']), obtenerPreguntaPorId);
 
 router.get('/orden', validarRol(['admin', 'estudiante']), obtenerPreguntaPorOrden);
+
+router.get('/exam/:id', validarRol(['admin', 'estudiante']), obtenerPreguntaPorExamen);
 
 //Logueado como admin
 router.use(validarRol(['admin']));

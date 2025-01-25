@@ -109,12 +109,13 @@ export const obtenerPreguntaPorIdService = async (id_pregunta) => {
     }
 }
 
-export const obtenerPreguntaPorOrdenService = async (orden) => {
+export const obtenerPreguntaPorOrdenService = async (orden, id_examen) => {
     try {
         //Buscamos la pregunta con ese id
         const pregunta = await Pregunta.findOne({
             where: {
-                orden
+                orden,
+                id_examen
             },
             include: {
                 model: Opcion,
@@ -149,6 +150,40 @@ export const obtenerPreguntaPorOrdenService = async (orden) => {
     }
 }
 
+export const obtenerPreguntaPorExamenService = async (id_examen) => {
+    try {
+        //Buscamos la pregunta con ese id
+        const preguntas = await Pregunta.findAll({
+            where: {
+                id_examen
+            },
+            attributes: ['id_pregunta', 'orden']
+        });
+        if (!preguntas) {
+            return {
+                ok: false,
+                status: 404,
+                msg: 'No se encontraron preguntas u opciones con este ID',
+                preguntas: null
+            }
+        }
+        return {
+            ok: true,
+            status: 200,
+            msg: null,
+            preguntas
+        }
+
+    } catch (error) {
+        console.log(error);
+        return {
+            ok: false,
+            status: 500,
+            msg: 'Error en el servidor'
+        };
+    }
+}
+
 export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
     try {
         //Verificamos que la pregunta exista
@@ -171,7 +206,7 @@ export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
             }
         }
         //Actualizar pregunta
-        await Pregunta.update({ contenido }, { where: { id_pregunta } })
+        const preguntaActualizada = await Pregunta.update({ contenido }, { where: { id_pregunta } })
 
         if (imagen) {
             //Eliminamos la imagen anterior
@@ -192,14 +227,15 @@ export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
                 where: { id_pregunta: pregunta.id_pregunta }
             })
 
-            pregunta.imagen_url = url_recurso;
-            pregunta.public_id_imagen = public_id;
+            preguntaActualizada.imagen_url = url_recurso;
+            preguntaActualizada.public_id_imagen = public_id;
         }
-
+        console.log(preguntaActualizada);
         return {
             ok: true,
             status: 201,
-            msg: "Pregunta guardada exitosamente"
+            msg: "Pregunta guardada exitosamente",
+            pregunta: preguntaActualizada
         };
 
     } catch (error) {
