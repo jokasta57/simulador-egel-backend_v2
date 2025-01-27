@@ -120,6 +120,7 @@ export const obtenerPreguntaPorOrdenService = async (orden, id_examen) => {
             include: {
                 model: Opcion,
                 as: 'opcion',
+                required: false,
                 where: {
                     id_pregunta: Sequelize.col('Pregunta.id_pregunta') // Aquí usas el id de la pregunta en el include
                 }
@@ -187,7 +188,8 @@ export const obtenerPreguntaPorExamenService = async (id_examen) => {
 export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
     try {
         //Verificamos que la pregunta exista
-        const pregunta = await Pregunta.findByPk(id_pregunta)
+        const pregunta = await Pregunta.findOne({where: {id_pregunta}})
+        console.log(pregunta);
 
         //Verificar que no haya preguntas duplicadas
         const preguntaDisponible = await Pregunta.findOne({
