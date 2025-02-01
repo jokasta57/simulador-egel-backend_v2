@@ -16,7 +16,7 @@ router.use(validarRol(['admin']));
 
 router.post('/', errorHandlingImages, crearOpcionValidators, crearOpcion);
 
-router.put('/:id', errorHandlingImages, editarOpcion);
+router.put('/:id', errorHandlingImages, crearOpcionValidators, editarOpcion);
 
 router.put('/imagen/:id', eliminarImagenOpcion);
 
