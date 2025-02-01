@@ -53,15 +53,16 @@ export const loginUsuario = async (req, res) => {
 export const revalidarToken = async (req, res) => {
     try {
 
-        const id_admin = req.id_admin;
-        const nombre = req.nombre;
+        const id_admin = req.uid;
+        const nombre = req.name;
+        const role = req.role;
 
         //Generar un nuevo JWT y retornarlo en esta peticion
-        const token = await generarJWT(id_admin, nombre);
+        const token = await generarJWT(id_admin, nombre, role);
 
         res.json({
             ok: true,
-            id_admin, nombre,
+            id_admin, nombre, role,
             token
         })
 

@@ -161,7 +161,7 @@ export const editarOpcionService = async (id_opcion, contenido, es_correcta, ima
             return {
                 ok: false,
                 status: 409,
-                msg: "La pregunta ya existe en este examen. Por favor, ingresa una pregunta diferente.",
+                msg: "La opcion ya está guardada en esta pregunta. Por favor, ingresa una opción diferente.",
                 opcion: null
             }
         }
