@@ -9,11 +9,11 @@ const router = Router();
 //El usuario debe estar logueado para poder hacer peticiones
 router.use( validarJWT );
 
-router.get('/id/:id', validarRol(['admin', 'estudiante']), obtenerPreguntaPorId);
+router.get('/id/:id', validarRol(['admin', 'student']), obtenerPreguntaPorId);
 
-router.get('/orden', validarRol(['admin', 'estudiante']), obtenerPreguntaPorOrden);
+router.get('/orden', validarRol(['admin', 'student']), obtenerPreguntaPorOrden);
 
-router.get('/exam/:id', validarRol(['admin', 'estudiante']), obtenerPreguntaPorExamen);
+router.get('/exam/:id', validarRol(['admin', 'student']), obtenerPreguntaPorExamen);
 
 //Logueado como admin
 router.use(validarRol(['admin']));
