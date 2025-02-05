@@ -1,4 +1,4 @@
-import { crearExamenService, obtenerExamenService, obtenerExamenPorIdService, editarExamenService } from "../services/examen.js";
+import { crearExamenService, obtenerExamenService, obtenerExamenPorIdService, editarExamenService, obtenerExamenPorCarreraService } from "../services/examen.js";
 
 export const crearExamen = async (req, res) => {
     try {
@@ -45,6 +45,27 @@ export const obtenerExamen = async (req, res) => {
     try {
         //req.body es enviado como data
         const { status, ok, msg, examenes } = await obtenerExamenService();
+
+        res.status(status).json({
+            ok,
+            msg,
+            examenes
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: "Error en el servidor",
+        })
+    }
+}
+
+export const obtenerExamenPorCarrera = async (req, res) => {
+    const {carrera} = req.query;
+    try {
+        //req.body es enviado como data
+        const { status, ok, msg, examenes } = await obtenerExamenPorCarreraService(carrera);
 
         res.status(status).json({
             ok,

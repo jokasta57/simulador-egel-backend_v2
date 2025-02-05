@@ -1,4 +1,5 @@
 import { generarJWT } from "../helpers/jwt.js";
+import Estudiante from "../models/Estudiante.js";
 import { crearAdministradorService, loginService } from "../services/auth.js";
 
 export const crearAdministrador = async (req, res) => {
@@ -60,10 +61,20 @@ export const revalidarToken = async (req, res) => {
         //Generar un nuevo JWT y retornarlo en esta peticion
         const token = await generarJWT(id, nombre, role);
 
+        let additionalInfo;
+        if(role === 'student'){
+            const estudiante = await Estudiante.findOne({where: {numero_cuenta: id}});
+            additionalInfo = {
+                numero_cuenta: estudiante.numero_cuenta,
+                carrera: estudiante.carrera
+            };
+        }
+
         res.json({
             ok: true,
             id, nombre, role,
-            token
+            token,
+            ...additionalInfo
         })
 
     } catch (error) {
