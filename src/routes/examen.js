@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { crearExamen, obtenerExamen, obtenerExamenPorId, editarExamen } from '../controllers/examen.js';
+import { crearExamen, obtenerExamen, obtenerExamenPorId, editarExamen, obtenerExamenPorCarrera } from '../controllers/examen.js';
 import { crearExamenValidators } from '../middlewares/validators/examen.js';
 import { validarJWT, validarRol } from '../middlewares/validar-jwt.js';
 
@@ -13,6 +13,8 @@ router.post('/', validarRol(['admin']), crearExamenValidators, crearExamen);
 router.put('/:id', validarRol(['admin']), crearExamenValidators, editarExamen);
 
 router.get('/', validarRol(['admin']), obtenerExamen);
+
+router.get('/career', validarRol(['admin', 'student']), obtenerExamenPorCarrera);
 
 router.get('/:id', validarRol(['admin']), obtenerExamenPorId);
 
