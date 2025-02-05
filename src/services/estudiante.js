@@ -65,7 +65,7 @@ export const loginEstudianteService = async(numero_cuenta, nip) => {
             }
         }
 
-        const role = 'estudiante'
+        const role = 'student'
         //Generar JWT
         const token = await generarJWT(estudiante.id_admin, estudiante.nombre, role);
 
@@ -73,7 +73,8 @@ export const loginEstudianteService = async(numero_cuenta, nip) => {
             ok: true,
             status: 200,
             msg: 'Usuario autenticado exitosamente',
-            token
+            token,
+            estudiante
         }
 
 

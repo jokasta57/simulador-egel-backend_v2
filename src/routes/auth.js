@@ -6,9 +6,9 @@ import { crearAdminValidators } from '../middlewares/validators/auth.js';
 
 const router = Router();
 
-router.post('/users', crearAdminValidators, crearAdministrador);
+router.post('/admin', crearAdminValidators, crearAdministrador);
 
-router.post('/users/auth', loginValidators, loginUsuario);
+router.post('/admin/auth', loginValidators, loginUsuario);
 
 router.get('/users/renew', validarJWT, revalidarToken);
 

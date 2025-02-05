@@ -26,12 +26,13 @@ export const loginEstudiante = async (req, res) => {
 
         const { numero_cuenta, nip } = req.body;
 
-        const { ok, status, msg, token } = await loginEstudianteService(numero_cuenta, nip);
+        const { ok, status, msg, token, estudiante } = await loginEstudianteService(numero_cuenta, nip);
 
         res.status(status).json({
             ok,
             msg,
-            token
+            token,
+            estudiante
         })
 
     } catch (error) {
