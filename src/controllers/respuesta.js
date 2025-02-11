@@ -1,4 +1,4 @@
-import { crearRespuestaService } from "../services/respuesta.js";
+import { crearRespuestaService, obtenerRespuestaPorIdService, actualizarRespuestaService } from "../services/respuesta.js";
 
 export const crearRespuesta = async(req, res) => {
 
@@ -24,11 +24,11 @@ export const crearRespuesta = async(req, res) => {
 
 export const obtenerRespuestaPorId = async(req, res) => {
 
-    const { id_respuesta } = req.params;
+    const { id } = req.params;
 
     try {
 
-        // const { status, ok, msg, respuesta } = await crearRespuestaService(id_intento, id_opcion);
+        const { status, ok, msg, respuesta } = await obtenerRespuestaPorIdService(id);
 
         res.status(status).json({
             ok,
@@ -46,11 +46,13 @@ export const obtenerRespuestaPorId = async(req, res) => {
 
 export const actualizarRespuesta = async(req, res) => {
 
-    const { id_respuesta } = req.params;
+    const { id } = req.params;
+    const { id_opcion } = req.query;
+
 
     try {
 
-        // const { status, ok, msg, respuesta } = await crearRespuestaService(id_intento, id_opcion);
+        const { status, ok, msg, respuesta } = await actualizarRespuestaService(id, id_opcion);
 
         res.status(status).json({
             ok,
