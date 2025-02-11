@@ -82,6 +82,30 @@ export const editarExamenService = async(updateInfo, id_examen) => {
     }
 }
 
+export const editarEstadoExamenService = async(estado, id_examen) => {
+    try {
+        const examen = await Examen.findByPk(id_examen)
+
+        //Crear nuevo estudiante
+        await Examen.update({estado}, {where: {id_examen}})
+
+        return {
+            ok: true, 
+            status: 201,
+            msg: "Examen actualizado exitosamente",
+            examen
+        };
+
+    } catch (error) {
+        console.log(error);
+        return {
+            ok: false,
+            status: 500,
+            msg: 'Error en el servidor'
+        };
+    }
+}
+
 export const obtenerExamenService = async() => {
     try {
         
