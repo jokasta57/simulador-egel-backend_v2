@@ -69,12 +69,6 @@ export const eliminarOpcionService = async(id_opcion) => {
             }
         }
 
-        //verificar que haya al menos dos opciones disponibles por pregunta
-        const opcionesDisponibles = await Opcion.findAll({where: {id_pregunta: opcion.id_pregunta}});
-
-        if (opcionesDisponibles.length <= 2 ) return { ok: false, status: 400, msg: 'Debe de haber un minimo de 2 opciones por pregunta' }
-
-
          //Revisamos si hay alguna imagen vinculada
          if (opcion.public_id_imagen) {
             //Eliminamos la imagen relacionada a la pregunta en cloudinary
