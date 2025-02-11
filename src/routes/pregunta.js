@@ -26,4 +26,4 @@ router.put('/imagen/:id', errorHandlingImages, eliminarImagenPregunta);
 
 router.delete('/:id', eliminarPregunta);
 
-export default router;  
+export default router;
