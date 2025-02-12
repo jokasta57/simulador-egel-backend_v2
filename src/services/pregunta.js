@@ -88,7 +88,7 @@ export const obtenerPreguntaPorIdService = async (id_pregunta) => {
             return {
                 ok: false,
                 status: 404,
-                msg: 'No se encontraron preguntas u opciones con este ID',
+                msg: 'No se encontraron preguntas u opciones en este examen',
                 pregunta: null
             }
         }
@@ -130,7 +130,7 @@ export const obtenerPreguntaPorOrdenService = async (orden, id_examen) => {
             return {
                 ok: false,
                 status: 404,
-                msg: 'No se encontraron preguntas u opciones con este ID',
+                msg: 'No se encontraron preguntas u opciones en este examen',
                 pregunta: null
             }
         }
@@ -164,7 +164,7 @@ export const obtenerPreguntaPorExamenService = async (id_examen) => {
             return {
                 ok: false,
                 status: 404,
-                msg: 'No se encontraron preguntas u opciones con este ID',
+                msg: 'No se encontraron preguntas u opciones en este examen',
                 preguntas: null
             }
         }

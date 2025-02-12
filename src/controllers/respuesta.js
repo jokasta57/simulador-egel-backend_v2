@@ -2,7 +2,7 @@ import { crearRespuestaService, obtenerRespuestaPorIdService, actualizarRespuest
 
 export const crearRespuesta = async(req, res) => {
 
-    const { id_intento, id_opcion } = req.query;
+    const { id_intento, id_opcion } = req.body;
 
     try {
 
