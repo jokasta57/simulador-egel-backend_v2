@@ -175,6 +175,7 @@ export const obtenerExamenPorIdService = async(id) => {
         
         const examen = await Examen.findByPk(id);
 
+        console.log(id);
         if(!examen) {
             return {
                 ok: false,

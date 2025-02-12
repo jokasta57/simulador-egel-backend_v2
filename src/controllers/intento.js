@@ -2,7 +2,9 @@ import { crearIntentoService, obtenerIntentoPorIdService, actualizarIntentoServi
 
 export const crearIntento = async(req, res) => {
 
-    const { numero_cuenta, id_examen } = req.query
+    const { numero_cuenta, id_examen } = req.body
+
+    console.log(numero_cuenta, id_examen);
 
     try {
         const { status, ok, msg, intento } = await crearIntentoService(numero_cuenta, id_examen);

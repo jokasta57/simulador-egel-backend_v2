@@ -29,6 +29,7 @@ export const crearIntentoService = async(numero_cuenta, id_examen) => {
         }
 
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             ok: false,
             msg: "Error en el servidor"
