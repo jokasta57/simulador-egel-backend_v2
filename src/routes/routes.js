@@ -6,6 +6,7 @@ import preguntaRoutes from './pregunta.js'
 import opcionRoutes from './opcion.js'
 import respuestaRoutes from './respuesta.js'
 import intentoRoutes from './intento_examen.js'
+import resultadosRoutes from './resultados.js'
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.use('/questions', preguntaRoutes);
 app.use('/options', opcionRoutes);
 app.use('/answers', respuestaRoutes);
 app.use('/attempt', intentoRoutes);
+app.use('/results', resultadosRoutes);
 
 export default app;

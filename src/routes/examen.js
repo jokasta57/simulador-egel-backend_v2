@@ -18,6 +18,6 @@ router.get('/', validarRol(['admin']), obtenerExamen);
 
 router.get('/career', validarRol(['admin', 'student']), obtenerExamenPorCarrera);
 
-router.get('/:id', validarRol(['admin']), obtenerExamenPorId);
+router.get('/:id', validarRol(['admin', 'student']), obtenerExamenPorId);
 
 export default router;  
