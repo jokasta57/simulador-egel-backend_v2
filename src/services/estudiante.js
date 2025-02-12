@@ -86,3 +86,39 @@ export const loginEstudianteService = async(numero_cuenta, nip) => {
         }
     }
 }
+
+export const obtenerInfoDelEstudianteService = async(numero_cuenta) => {
+    try {
+        //Verificar que el usuario exista
+        const estudiante = await Estudiante.findOne({ 
+            where: { 
+                numero_cuenta 
+            },
+            attributes: ["numero_cuenta", "nombre", "apellido_paterno", "apellido_materno", "email", "carrera", "semestre", "grupo", "ciclo_escolar"]
+        });
+
+        if(!estudiante){
+            return {
+                ok: false,
+                status: 404,
+                msg: 'Este usurio no existe',
+                estudiante: null
+            }
+        }
+
+        return {
+            ok: true,
+            status: 200,
+            msg: 'Usuario autenticado exitosamente',
+            estudiante
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return {
+            status: 500,
+            msg: 'Error en el servidor'
+        }
+    }
+}
