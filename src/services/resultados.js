@@ -10,22 +10,24 @@ export const obtenerResultadosService = async (numero_cuenta) => {
         historialExamenes = await Intento_examen.findAll({
             attributes: [
                 [col("Examen.nombre"), "nombre"],
+                [col("Examen.id_examen"), "id_examen"],
                 [col("Examen.area"), "area"],
-                [col("fecha_aplicacion"), "fecha_aplicacion"],
+                [col("Intento_examen.fecha_aplicacion"), "fecha_aplicacion"],
+                [col("Intento_examen.calificacion"), "calificacion"], 
                 [
                     literal(`(
                         SELECT COUNT(*)
                         FROM Intento_examen AS i
                         WHERE i.numero_cuenta = Intento_examen.numero_cuenta
                         AND i.id_examen = Intento_examen.id_examen
-                        AND i.fecha_aplicacion <= Intento_examen.fecha_aplicacion
-                    )`),
+                        AND i.fecha_aplicacion < Intento_examen.fecha_aplicacion
+                        OR (i.fecha_aplicacion = Intento_examen.fecha_aplicacion AND i.id_intento < Intento_examen.id_intento)
+                    ) + 1`),
                     "intento"
                 ],
-                [fn("AVG", col("Intento_examen.calificacion")), "calificacion"], // Promedio de calificaciones si hay múltiples intentos
                 [
                     literal(`CASE 
-                        WHEN AVG(Intento_examen.calificacion) >= 70 THEN 'Aprobado' 
+                        WHEN Intento_examen.calificacion >= 70 THEN 'Aprobado' 
                         ELSE 'Reprobado' 
                     END`),
                     "estado"
@@ -40,9 +42,18 @@ export const obtenerResultadosService = async (numero_cuenta) => {
             where: {
                 numero_cuenta
             },
-            group: ["Examen.nombre", "Examen.area", "Intento_examen.fecha_aplicacion", "Intento_examen.numero_cuenta", "Intento_examen.id_examen"],
-            order: [["fecha_aplicacion", "DESC"]]
+            group: [
+                "Examen.nombre", 
+                "Examen.area", 
+                "Intento_examen.fecha_aplicacion", 
+                "Intento_examen.numero_cuenta", 
+                "Intento_examen.id_examen", 
+                "Intento_examen.id_intento"
+            ],
+            order: [["fecha_aplicacion", "DESC"], ["id_intento", "DESC"]] // Ordenar cronológicamente y por ID
         });
+        
+        
 
 
         if (!historialExamenes) {
