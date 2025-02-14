@@ -1,11 +1,11 @@
 import { Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociaciones.js"
 
-export const crearRespuestaService = async(id_intento, id_opcion) => {
+export const crearRespuestaService = async (id_intento, id_opcion) => {
     try {
-        
-        const intentoExistente = await Intento_examen.findOne({where: { id_intento }});
 
-        if(!intentoExistente) {
+        const intentoExistente = await Intento_examen.findOne({ where: { id_intento } });
+
+        if (!intentoExistente) {
             return {
                 status: 404,
                 ok: false,
@@ -13,9 +13,9 @@ export const crearRespuestaService = async(id_intento, id_opcion) => {
             }
         }
 
-        const opcion = await Opcion.findOne({where: { id_opcion }});
+        const opcion = await Opcion.findOne({ where: { id_opcion } });
 
-        if(!opcion){
+        if (!opcion) {
             return {
                 status: 404,
                 ok: false,
@@ -46,7 +46,7 @@ export const crearRespuestaService = async(id_intento, id_opcion) => {
     }
 }
 
-export const obtenerRespuestaPorIdService = async(id_respuesta) => {
+export const obtenerRespuestaPorIdService = async (id_respuesta) => {
     try {
         const respuesta = await Respuesta.findOne({
             where: {
@@ -55,16 +55,16 @@ export const obtenerRespuestaPorIdService = async(id_respuesta) => {
             attributes: ['id_respuesta', 'id_opcion'],
             include: {
                 model: Opcion,
-                attributes: ['id_opcion','imagen_url', 'contenido'],
+                attributes: ['id_opcion', 'imagen_url', 'contenido'],
                 include: {
                     model: Pregunta,
                     as: 'pregunta',
-                    attributes: ['id_pregunta', 'contenido','imagen_url', 'orden']
+                    attributes: ['id_pregunta', 'contenido', 'imagen_url', 'orden']
                 }
             }
         });
 
-        if(!respuesta) {
+        if (!respuesta) {
             return {
                 status: 404,
                 ok: false,
@@ -92,23 +92,22 @@ export const obtenerRespuestaPorIdService = async(id_respuesta) => {
 }
 
 
-export const actualizarRespuestaService = async(id_respuesta, id_opcion) => {
+export const actualizarRespuestaService = async (id_respuesta, id_opcion) => {
     try {
-        
-        let respuesta = await Respuesta.findOne({where: {id_respuesta}})
 
-        if(!respuesta) {
+        const respuestaExistente = await Respuesta.findOne({ where: { id_respuesta } });
+
+        if (!respuestaExistente) {
             return {
                 status: 404,
                 ok: false,
-                msg: "No existe una respuesta con ese ID",
-                respuesta: null
+                msg: "ID de la respuesta no encontrado"
             }
         }
 
-        const opcion = await Opcion.findOne({where: { id_opcion }});
+        const opcion = await Opcion.findOne({ where: { id_opcion } });
 
-        if(!opcion){
+        if (!opcion) {
             return {
                 status: 404,
                 ok: false,
@@ -116,7 +115,17 @@ export const actualizarRespuestaService = async(id_respuesta, id_opcion) => {
             }
         }
 
-        respuesta = await Respuesta.update({id_opcion}, { where: {id_respuesta}})
+        await Respuesta.update({
+            id_opcion,
+            es_correcta: opcion.es_correcta
+        }, {
+            where: {
+                id_respuesta
+            }
+        })
+
+        const respuesta = await Respuesta.findOne({ where: { id_respuesta } });
+
 
         return {
             status: 201,
@@ -126,7 +135,6 @@ export const actualizarRespuestaService = async(id_respuesta, id_opcion) => {
         }
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
