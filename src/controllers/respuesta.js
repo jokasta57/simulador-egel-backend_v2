@@ -47,7 +47,7 @@ export const obtenerRespuestaPorId = async(req, res) => {
 export const actualizarRespuesta = async(req, res) => {
 
     const { id } = req.params;
-    const { id_opcion } = req.query;
+    const { id_opcion } = req.body;
 
 
     try {

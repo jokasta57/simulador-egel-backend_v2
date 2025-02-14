@@ -1,5 +1,5 @@
 import { Op, Sequelize } from "sequelize";
-import { Opcion, Pregunta } from "../models/asociaciones.js";
+import { Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociaciones.js";
 import { eliminarCloudinary, subirCloudinary } from "../uploads/cloudinary.js";
 import conexion from "../database/database.js";
 
@@ -173,6 +173,64 @@ export const obtenerPreguntaPorExamenService = async (id_examen) => {
             status: 200,
             msg: null,
             preguntas
+        }
+
+    } catch (error) {
+        console.log(error);
+        return {
+            ok: false,
+            status: 500,
+            msg: 'Error en el servidor'
+        };
+    }
+}
+
+export const obtenerPreguntaYRespuestaService = async (id_examen, orden, id_intento) => {
+    try {
+        //Buscamos la pregunta con ese id
+        const pregunta = await Pregunta.findOne({
+            where: {
+                orden,
+                id_examen
+            },
+            include: [{
+                model: Opcion,
+                as: 'opcion',
+                required: false,
+                where: {
+                    id_pregunta: Sequelize.col('Pregunta.id_pregunta') // Aquí usas el id de la pregunta en el include
+                },
+                include: [{
+                    model: Respuesta,
+                    required: false,
+                    include: [{
+                        model: Intento_examen,
+                        required: false,
+                        where: {
+                            id_intento
+                        },
+                        attributes: []
+                    }],
+                    where: {
+                        id_intento
+                    }
+                }],  
+            }]
+        });
+        console.log(pregunta);
+        if (!pregunta) {
+            return {
+                ok: false,
+                status: 404,
+                msg: 'No se encontraron preguntas u opciones en este examen',
+                pregunta: null
+            }
+        }
+        return {
+            ok: true,
+            status: 200,
+            msg: null,
+            pregunta
         }
 
     } catch (error) {
