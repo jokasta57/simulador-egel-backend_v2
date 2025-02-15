@@ -13,12 +13,24 @@ const Admin = conexion.define('admin', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    apellido_paterno: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    apellido_materno: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     numero_identificacion: {
         type: DataTypes.STRING,
         allowNull: false
     },
     nip: {
         type: DataTypes.STRING,
+        allowNull: false
+    },
+    superAdmin: {
+        type: DataTypes.BOOLEAN,
         allowNull: false
     }
 }, {

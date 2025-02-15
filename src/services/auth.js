@@ -61,10 +61,14 @@ export const loginService = async( numero_identificacion, nip) => {
             }
         }
 
-        const role = 'admin'
-        //Generar JWT
-        const token = await generarJWT(admin.id_admin, admin.nombre, role);
+        
+        let role =  admin?.superAdmin ? 'superAdmin' : 'admin' 
+        
+        admin.role = role;
 
+        //Generar JWT
+        const token = await generarJWT(admin.id_admin, admin.nombre, admin.apellido_paterno, admin.apellido_materno, role);
+        
         return {
             ok: true,
             status: 200,
