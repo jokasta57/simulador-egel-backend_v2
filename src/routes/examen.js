@@ -8,16 +8,16 @@ const router = Router();
 //El usuario debe estar logueado para poder hacer peticiones
 router.use( validarJWT );
 
-router.post('/', validarRol(['admin']), crearExamenValidators, crearExamen);
+router.post('/', validarRol(['admin', 'superAdmin']), crearExamenValidators, crearExamen);
 
-router.put('/state/:id', validarRol(['admin']), editarEstadoExamen);
+router.put('/state/:id', validarRol(['admin', 'superAdmin']), editarEstadoExamen);
 
-router.put('/:id', validarRol(['admin']), crearExamenValidators, editarExamen);
+router.put('/:id', validarRol(['admin', 'superAdmin']), crearExamenValidators, editarExamen);
 
-router.get('/', validarRol(['admin']), obtenerExamen);
+router.get('/', validarRol(['admin', 'superAdmin']), obtenerExamen);
 
-router.get('/career', validarRol(['admin', 'student']), obtenerExamenPorCarrera);
+router.get('/career', validarRol(['admin', 'superAdmin']), obtenerExamenPorCarrera);
 
-router.get('/:id', validarRol(['admin', 'student']), obtenerExamenPorId);
+router.get('/:id', validarRol(['admin', 'superAdmin']), obtenerExamenPorId);
 
 export default router;  
