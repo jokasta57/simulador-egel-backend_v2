@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export const generarJWT = ( uid, name, apellido_paterno, apellido_materno, role ) => {
+    console.log(role, 'roleee');
 
     return new Promise((resolve, reject) => {
 
