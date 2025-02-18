@@ -42,6 +42,8 @@ export const validarRol = (rolesPermitidos) => {
         try {
             const role = req.role; // 'req.usuario' se llena al validar el JWT en 'validarJWT'
             if (!rolesPermitidos.includes(role)) {
+                console.log(rolesPermitidos);
+                console.log(role);
                 return res.status(403).json({
                     msg: 'No tienes permisos para realizar esta acción.',
                 });
