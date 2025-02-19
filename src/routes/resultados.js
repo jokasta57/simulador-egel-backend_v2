@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import { validarJWT, validarRol } from '../middlewares/validar-jwt.js';
-import { obtenerCalificacionPorIntento, obtenerResultados, obtenerRevisionPorIntento } from '../controllers/resultados.js';
+import { obtenerCalificacionPorIntento, obtenerPreguntasParaPanel, obtenerResultados, obtenerRevisionPorIntento } from '../controllers/resultados.js';
 
 const router = Router();
 
@@ -12,5 +12,7 @@ router.get('/mis-resultados/:id', validarRol(['student']), obtenerResultados);
 router.get('/calificacion-intento/:id', validarRol(['student']), obtenerCalificacionPorIntento);
 
 router.get('/revision/:id_intento', validarRol(['student']), obtenerRevisionPorIntento);
+
+router.get('/preguntas-panel/:id_intento', validarRol(['student']), obtenerPreguntasParaPanel);
 
 export default router;  

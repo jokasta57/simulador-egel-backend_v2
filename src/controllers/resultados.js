@@ -1,4 +1,4 @@
-import { obtenerCalificacionPorIntentoService, obtenerResultadosService, obtenerRevisionPorIntentoService } from "../services/resultados.js";
+import { obtenerCalificacionPorIntentoService, obtenerPreguntasParaPanelService, obtenerResultadosService, obtenerRevisionPorIntentoService } from "../services/resultados.js";
 
 export const obtenerResultados = async (req, res) => {
     const { id } = req.params;
@@ -51,7 +51,7 @@ export const obtenerRevisionPorIntento = async (req, res) => {
 
     try {
 
-        const { status, ok, msg, intento, examen, preguntas, totalPreguntas, totalPages, currentPage} = await obtenerRevisionPorIntentoService(id_intento, page, limit);
+        const { status, ok, msg, intento, examen, preguntas, totalPreguntas, totalPages, currentPage, numeroIntento, preguntasPanel} = await obtenerRevisionPorIntentoService(id_intento, page, limit);
 
         res.status(status).json({
             ok,
@@ -61,7 +61,32 @@ export const obtenerRevisionPorIntento = async (req, res) => {
             preguntas, 
             totalPreguntas,
             totalPages, 
-            currentPage
+            currentPage,
+            numeroIntento,
+            preguntasPanel
+        })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error en el servidor'
+        })
+    }
+}
+
+export const obtenerPreguntasParaPanel = async (req, res) => {
+
+    const { id_intento } = req.params;
+
+    try {
+
+        const { status, ok, msg, preguntasPanel} = await obtenerPreguntasParaPanelService(id_intento);
+
+        res.status(status).json({
+            ok,
+            msg,
+            preguntasPanel
         })
 
     } catch (error) {

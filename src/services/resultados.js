@@ -14,6 +14,7 @@ export const obtenerResultadosService = async (numero_cuenta) => {
                 [col("Examen.area"), "area"],
                 [col("Intento_examen.fecha_aplicacion"), "fecha_aplicacion"],
                 [col("Intento_examen.calificacion"), "calificacion"],
+                [col("Intento_examen.id_intento"), "id_intento"],
                 [
                     literal(`(
                         SELECT COUNT(*)
@@ -174,6 +175,15 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
 
         respuestas.calificacionFinal = (respuestas.correctas / (totalPreguntas.length / 100)).toFixed(2);
 
+        await Intento_examen.update({
+            calificacion:
+                respuestas.calificacionFinal
+        }, {
+            where: {
+                id_intento
+            }
+        })
+
 
 
         console.log(respuestas);
@@ -222,6 +232,11 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
             where: {
                 id_intento
             }
+        })
+
+        let numeroIntento = await Intento_examen.findAll({
+            attributes: ['id_intento'],
+            where: { id_examen: intento.examen.id_examen }
         })
 
         if (!intento) {
@@ -281,6 +296,7 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
                 id_pregunta: pregunta.id_pregunta,
                 contenido: pregunta.contenido,
                 imagen_url: pregunta.imagen_url,
+                orden: pregunta.orden,
                 opcion_escogida: opcionEscogida.contenido,
                 opcion_escogida_correcta: respuestaUsuario ? respuestaUsuario.contenido === (opcionCorrecta ? opcionCorrecta.contenido : null) : false, // ✅ Comparación correcta
                 opcion_correcta: opcionCorrecta ? opcionCorrecta.contenido : "No hay opción correcta"
@@ -295,7 +311,8 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
             preguntas: formattedQuestions,
             totalPreguntas,
             totalPages: Math.ceil(totalPreguntas / limit),
-            currentPage: parseInt(page)
+            currentPage: parseInt(page),
+            numeroIntento: numeroIntento.length,
         };
 
     } catch (error) {
@@ -306,6 +323,73 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
             msg: null,
             examen: null,
             respuestas: null
+        }
+    }
+}
+
+export const obtenerPreguntasParaPanelService = async(id_intento) => {
+    try {
+        const intento = await Intento_examen.findOne({where: {id_intento}});
+
+        if(!intento) return { status: 404, ok: false, msg: 'Intento no encontrado', preguntasPanel: null }
+        //Seccion de panel
+        const preguntasPanel = await Pregunta.findAll({
+            attributes: ["id_pregunta", "orden"], // Solo lo necesario para el panel
+            where: { id_examen: intento.id_examen },
+            include: [
+                {
+                    model: Opcion,
+                    as: "opcion", // Usa el alias definido en las asociaciones
+                    attributes: ["id_opcion"]
+                }
+            ],
+            order: [["orden", "ASC"]]
+        });
+
+
+        // Obtener todas las respuestas del usuario para el intento
+        const respuestasUsuario = await Respuesta.findAll({
+            where: { id_intento },
+            attributes: ["id_opcion"], // Solo necesitamos la opción elegida
+            include: [
+                {
+                    model: Opcion,
+                    attributes: ["id_opcion", "es_correcta"], // Verificar si la opción era correcta
+                }
+            ]
+        });
+
+        // Convertir respuestas en un Map para búsqueda rápida
+        const respuestasMapeado = new Map();
+        respuestasUsuario.forEach(res => {
+            respuestasMapeado.set(res.id_opcion, res.opcion.es_correcta);
+        });
+
+        // Formatear la respuesta del panel
+        const panelFormatted = preguntasPanel.map((pregunta) => {
+            // Verificar si alguna opción fue respondida
+            const opcionRespondida = pregunta.opcion.find(op => respuestasMapeado.has(op.id_opcion));
+
+            return {
+                id_pregunta: pregunta.id_pregunta,
+                orden: pregunta.orden,
+                es_correcta: opcionRespondida ? respuestasMapeado.get(opcionRespondida.id_opcion) : false // Correcta o No respondida
+            };
+        });
+
+        return {
+            status: 200,
+            ok: true,
+            msg: null,
+            preguntasPanel: panelFormatted
+        };
+
+    } catch (error) {
+        console.log(error);
+        return {
+            status: 500,
+            ok: false,
+            msg: 'Error en el servidor'
         }
     }
 }
