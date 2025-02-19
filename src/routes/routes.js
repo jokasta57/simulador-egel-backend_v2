@@ -7,6 +7,7 @@ import opcionRoutes from './opcion.js'
 import respuestaRoutes from './respuesta.js'
 import intentoRoutes from './intento_examen.js'
 import resultadosRoutes from './resultados.js'
+import dashboardRoutes from './dashboard.js'
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.use('/options', opcionRoutes);
 app.use('/answers', respuestaRoutes);
 app.use('/attempt', intentoRoutes);
 app.use('/results', resultadosRoutes);
+app.use('/admin-dashboard', dashboardRoutes);
 
 export default app;

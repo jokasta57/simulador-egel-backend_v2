@@ -6,7 +6,6 @@ export const obtenerResultadosService = async (numero_cuenta) => {
     let historialExamenes = {};
 
     try {
-        //Obtener el historial de examenes del estudiante
         historialExamenes = await Intento_examen.findAll({
             attributes: [
                 [col("Examen.nombre"), "nombre"],
@@ -16,17 +15,6 @@ export const obtenerResultadosService = async (numero_cuenta) => {
                 [col("Intento_examen.calificacion"), "calificacion"],
                 [col("Intento_examen.id_intento"), "id_intento"],
                 [
-                    literal(`(
-                        SELECT COUNT(*)
-                        FROM Intento_examen AS i
-                        WHERE i.numero_cuenta = Intento_examen.numero_cuenta
-                        AND i.id_examen = Intento_examen.id_examen
-                        AND i.fecha_aplicacion < Intento_examen.fecha_aplicacion
-                        OR (i.fecha_aplicacion = Intento_examen.fecha_aplicacion AND i.id_intento < Intento_examen.id_intento)
-                    ) + 1`),
-                    "intento"
-                ],
-                [
                     literal(`CASE 
                         WHEN Intento_examen.calificacion >= 70 THEN 'Aprobado' 
                         ELSE 'Reprobado' 
@@ -34,25 +22,22 @@ export const obtenerResultadosService = async (numero_cuenta) => {
                     "estado"
                 ]
             ],
-            include: [
-                {
-                    model: Examen,
-                    attributes: [],
-                }
-            ],
-            where: {
-                numero_cuenta
-            },
-            group: [
-                "Examen.nombre",
-                "Examen.area",
-                "Intento_examen.fecha_aplicacion",
-                "Intento_examen.numero_cuenta",
-                "Intento_examen.id_examen",
-                "Intento_examen.id_intento"
-            ],
-            order: [["fecha_aplicacion", "DESC"], ["id_intento", "DESC"]] // Ordenar cronológicamente y por ID
+            include: [{ model: Examen, attributes: [] }],
+            where: { numero_cuenta },
+            order: [["id_examen", "ASC"], ["fecha_aplicacion", "ASC"], ["id_intento", "ASC"]]
         });
+
+        // Recalcular intentos manualmente
+        const intentosPorExamen = {};
+        historialExamenes.forEach((examen) => {
+            if (!intentosPorExamen[examen.id_examen]) {
+                intentosPorExamen[examen.id_examen] = 1;
+            } else {
+                intentosPorExamen[examen.id_examen]++;
+            }
+            examen.setDataValue("intento", intentosPorExamen[examen.id_examen]);
+        });
+
 
 
 
@@ -253,7 +238,7 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
                 {
                     model: Opcion,
                     as: "opcion",
-                    attributes: ["id_opcion", "contenido", "es_correcta"]
+                    attributes: ["id_opcion", "contenido", "es_correcta", 'imagen_url']
                 }
             ],
             limit: parseInt(limit),
@@ -268,7 +253,7 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
             where: { id_intento },
             include: {
                 model: Opcion, // Para obtener el contenido de la opción seleccionada
-                attributes: ["id_opcion", "contenido", "id_pregunta", "es_correcta"]
+                attributes: ["id_opcion", "contenido", "id_pregunta", "es_correcta", 'imagen_url']
             }
         });
 
@@ -276,7 +261,8 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
         const respuestasMap = respuestas.reduce((acc, respuesta) => {
             acc[respuesta.opcion.id_pregunta] = {
                 contenido: respuesta.opcion.contenido,
-                es_correcta: respuesta.opcion.es_correcta
+                es_correcta: respuesta.opcion.es_correcta,
+                imagen_url: respuesta.opcion.imagen_url
             };
             return acc;
         }, {});
@@ -298,8 +284,10 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
                 imagen_url: pregunta.imagen_url,
                 orden: pregunta.orden,
                 opcion_escogida: opcionEscogida.contenido,
+                opcion_escogida_imagen: respuestaUsuario ? respuestaUsuario.imagen_url : null,
                 opcion_escogida_correcta: respuestaUsuario ? respuestaUsuario.contenido === (opcionCorrecta ? opcionCorrecta.contenido : null) : false, // ✅ Comparación correcta
-                opcion_correcta: opcionCorrecta ? opcionCorrecta.contenido : "No hay opción correcta"
+                opcion_correcta: opcionCorrecta ? opcionCorrecta.contenido : "No hay opción correcta",
+                opcion_correcta_imagen: opcionCorrecta ? opcionCorrecta.imagen_url : null
             };
         });
 
@@ -327,11 +315,11 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
     }
 }
 
-export const obtenerPreguntasParaPanelService = async(id_intento) => {
+export const obtenerPreguntasParaPanelService = async (id_intento) => {
     try {
-        const intento = await Intento_examen.findOne({where: {id_intento}});
+        const intento = await Intento_examen.findOne({ where: { id_intento } });
 
-        if(!intento) return { status: 404, ok: false, msg: 'Intento no encontrado', preguntasPanel: null }
+        if (!intento) return { status: 404, ok: false, msg: 'Intento no encontrado', preguntasPanel: null }
         //Seccion de panel
         const preguntasPanel = await Pregunta.findAll({
             attributes: ["id_pregunta", "orden"], // Solo lo necesario para el panel
