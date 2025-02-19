@@ -89,7 +89,10 @@ export const actualizarIntentoService = async(id_intento, calificacion) => {
             }
         }
 
-        const intento = await Intento_examen.update({calificacion}, {where: {id_intento}});
+        //Verifica que haya una calificacion siempre
+        const verificacionCalificacion = calificacion ? calificacion : 0;
+
+        const intento = await Intento_examen.update({calificacion: verificacionCalificacion}, {where: {id_intento}});
 
         return {
             status: 201,
