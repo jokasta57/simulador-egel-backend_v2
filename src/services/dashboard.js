@@ -1,5 +1,5 @@
 import { Op, Sequelize } from "sequelize"
-import { Estudiante, Examen, Intento_examen } from "../models/asociaciones.js"
+import { Estudiante, Examen, Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociaciones.js"
 
 export const obtenerPorcentajeAprobadoService = async (carrera) => {
     let datosInicio = {}
@@ -130,7 +130,8 @@ export const obtenerPorcentajeFechasService = async (carrera) => {
             nombre: [...datos.nombre].join(", "), // Convertimos el Set en un string con los nombres de los exámenes
             porcentajeAprobados: datos.totalIntentos > 0
                 ? ((datos.totalAprobados / datos.totalIntentos) * 100).toFixed(2) // Cálculo correcto del porcentaje
-                : "0.00"
+                : "0.00",
+            totalIntentos: datos.totalIntentos
         }));
 
         return {
@@ -145,6 +146,155 @@ export const obtenerPorcentajeFechasService = async (carrera) => {
             status: 500,
             ok: false,
             porcentajesPorFecha: null
+        };
+    }
+};
+
+export const obtenerBorradoresService = async (carrera) => {
+    try {
+
+        const borradores = await Examen.findAll({
+            where: {
+                carrera,
+                estado: 'borrador'
+            }
+        })
+
+        if (!borradores) return {
+            status: 404,
+            ok: false,
+            msg: 'No hay borradores disponibles'
+        }
+
+        return {
+            status: 200,
+            ok: true,
+            msg: null,
+            borradores
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            status: 500,
+            ok: false,
+            borradores: null
+        };
+    }
+};
+
+export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInicio, fechaFin) => {   
+    try {
+        // Construir condición opcional de fechas
+        let whereCondition = { id_examen };
+        
+        if (fechaInicio && fechaFin) {
+            whereCondition.fecha_aplicacion = { [Op.between]: [fechaInicio, fechaFin] };
+        } else if (fechaInicio) {
+            whereCondition.fecha_aplicacion = { [Op.gte]: fechaInicio };
+        } else if (fechaFin) {
+            whereCondition.fecha_aplicacion = { [Op.lte]: fechaFin };
+        }
+
+        let intentos = await Intento_examen.findAll({
+            include: [{
+                model: Examen,
+                where: { id_examen },
+                attributes: [],
+            }, {
+                model: Respuesta,
+                include: [{
+                    model: Opcion,
+                    as: 'opcion',
+                    attributes: ['id_opcion', 'contenido', 'imagen_url', 'es_correcta'],
+                    include: [{
+                        model: Pregunta,
+                        as: 'pregunta',
+                        attributes: ['id_pregunta', 'contenido', 'imagen_url', 'orden'],
+                    }]
+                }]
+
+            }],
+            attributes: ['fecha_aplicacion', 'calificacion', 'id_intento'],
+            where: whereCondition
+        })
+
+        // Objeto para almacenar los aciertos por pregunta
+        let rendimientoPreguntas = {};
+
+        // Procesar datos
+        intentos.forEach(intento => {
+            let respuestas = intento.respuesta || [];
+
+            respuestas.forEach(r => {
+                let pregunta = r.opcion.pregunta;
+                let id_pregunta = pregunta.id_pregunta;
+                let orden = pregunta.orden;
+                let id_opcion = r.opcion.id_opcion;
+                let contenido_opcion = r.opcion.contenido;
+        
+                if (!rendimientoPreguntas[id_pregunta]) {
+                    rendimientoPreguntas[id_pregunta] = {
+                        pregunta: orden,
+                        porcentaje_aciertos: 0,
+                        texto_pregunta: pregunta.contenido,
+                        opciones: {}
+                    };
+                }
+        
+                // Registrar opción si no existe
+                if (!rendimientoPreguntas[id_pregunta].opciones[id_opcion]) {
+                    rendimientoPreguntas[id_pregunta].opciones[id_opcion] = {
+                        opcion: Object.keys(rendimientoPreguntas[id_pregunta].opciones).length + 1, // A, B, C, D...
+                        texto: contenido_opcion,
+                        frecuencia: 0
+                    };
+                }
+        
+                // Aumentar la frecuencia de la opción seleccionada
+                rendimientoPreguntas[id_pregunta].opciones[id_opcion].frecuencia++;
+        
+                // Contar respuestas correctas
+                if (r.es_correcta) {
+                    rendimientoPreguntas[id_pregunta].porcentaje_aciertos++;
+                }
+            });
+        });
+        
+        // Convertir el objeto en un array y calcular los porcentajes finales
+        let rendimientoPreguntasArray = Object.values(rendimientoPreguntas).map(pregunta => {
+            let totalRespuestas = Object.values(pregunta.opciones).reduce((sum, opcion) => sum + opcion.frecuencia, 0);
+            let porcentajeAciertos = totalRespuestas > 0 ? (pregunta.porcentaje_aciertos / totalRespuestas) * 100 : 0;
+        
+            return {
+                pregunta: pregunta.pregunta,
+                porcentaje_aciertos: porcentajeAciertos.toFixed(2),
+                texto_pregunta: pregunta.texto_pregunta,
+                opciones: Object.values(pregunta.opciones)
+            };
+        });
+        
+        console.log(rendimientoPreguntasArray);
+
+
+
+        if (!intentos) return {
+            status: 404,
+            ok: false,
+            msg: 'No hay preguntas disponibles'
+        }
+
+        return {
+            status: 200,
+            ok: true,
+            msg: null,
+            intentos: rendimientoPreguntasArray
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            status: 500,
+            ok: false,
+            borradores: null
         };
     }
 };

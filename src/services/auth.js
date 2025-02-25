@@ -46,7 +46,7 @@ export const loginService = async( numero_identificacion, nip) => {
             return {
                 ok: false,
                 status: 404,
-                msg: 'Este usurio no existe',
+                msg: 'El usuario no está registrado',
                 token: null
             }
         }
@@ -56,7 +56,7 @@ export const loginService = async( numero_identificacion, nip) => {
             return {
                 ok: false,
                 status: 401,
-                msg: "La contraseña es incorrecta",
+                msg: "Verifica tus credenciales e intenta de nuevo.",
                 token: null
             }
         }

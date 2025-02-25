@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import { validarJWT, validarRol } from '../middlewares/validar-jwt.js';
-import { obtenerPorcentajeAprobados, obtenerPorcentajeFechas } from '../controllers/dashboard.js';
+import { obtenerPorcentajeAprobados, obtenerPorcentajeFechas, obtenerBorradores, obtenerRendimientoPorPregunta } from '../controllers/dashboard.js';
 
 const router = Router();
 
@@ -10,5 +10,9 @@ router.use( validarJWT );
 router.get('/porcentaje-aprobados', validarRol(['admin', 'superAdmin']), obtenerPorcentajeAprobados);
 
 router.get('/porcentaje-fechas', validarRol(['admin', 'superAdmin']), obtenerPorcentajeFechas);
+
+router.get('/borradores', validarRol(['admin', 'superAdmin']), obtenerBorradores);
+
+router.get('/rendimiento-preguntas/:id_examen', validarRol(['admin', 'superAdmin']), obtenerRendimientoPorPregunta);
 
 export default router;  
