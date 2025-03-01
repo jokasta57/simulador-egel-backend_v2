@@ -184,6 +184,8 @@ export const obtenerBorradoresService = async (carrera) => {
 
 export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInicio, fechaFin) => {   
     try {
+        console.log(fechaInicio, fechaFin);
+
         // Construir condición opcional de fechas
         let whereCondition = { id_examen };
         
@@ -217,7 +219,6 @@ export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInici
             attributes: ['fecha_aplicacion', 'calificacion', 'id_intento'],
             where: whereCondition
         })
-
         // Objeto para almacenar los aciertos por pregunta
         let rendimientoPreguntas = {};
 
@@ -263,7 +264,7 @@ export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInici
         // Convertir el objeto en un array y calcular los porcentajes finales
         let rendimientoPreguntasArray = Object.values(rendimientoPreguntas).map(pregunta => {
             let totalRespuestas = Object.values(pregunta.opciones).reduce((sum, opcion) => sum + opcion.frecuencia, 0);
-            let porcentajeAciertos = totalRespuestas > 0 ? (pregunta.porcentaje_aciertos / totalRespuestas) * 100 : 0;
+            let porcentajeAciertos = totalRespuestas > 0 ? (pregunta.porcentaje_aciertos / totalRespuestas) : 0;
         
             return {
                 pregunta: pregunta.pregunta,
@@ -272,9 +273,6 @@ export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInici
                 opciones: Object.values(pregunta.opciones)
             };
         });
-        
-        console.log(rendimientoPreguntasArray);
-
 
 
         if (!intentos) return {
@@ -294,7 +292,158 @@ export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInici
         return {
             status: 500,
             ok: false,
+            msg:'Error en el servidor',
             borradores: null
+        };
+    }
+};
+
+export const obtenerUltimoExamenAplicadoService = async(carrera) => {
+    try {
+         //Ultimo examen aplicado
+         const examen = await Intento_examen.findOne({
+            include: [{
+                model: Examen,
+                attributes: ['nombre'],
+                where: { carrera }
+            }],
+            order: [["fecha_aplicacion", 'DESC']]
+        })
+
+        if(!examen) { 
+            return {
+                status: 404,
+                ok: false,
+                msg: "No se han aplicado exámenes",
+                examen: null
+            }
+        }
+
+        return {
+            status: 200,
+            ok: true,
+            msg: null,
+            examen
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return {
+            status: 500,
+            ok: false,
+            msg:'Error en el servidor',
+            examen: null
+        };
+    }
+}
+
+export const obtenerCalificacionesYResumenService = async (id_examen, fechaInicio, fechaFin) => {
+    try {
+        console.log(fechaInicio, fechaFin);
+        // Construcción de la condición opcional de fechas
+        let whereCondition = { id_examen };
+
+        if (fechaInicio && fechaFin) {
+            whereCondition.fecha_aplicacion = { [Op.between]: [fechaInicio, fechaFin] };
+        } else if (fechaInicio) {
+            whereCondition.fecha_aplicacion = { [Op.gte]: fechaInicio };
+        } else if (fechaFin) {
+            whereCondition.fecha_aplicacion = { [Op.lte]: fechaFin };
+        }
+
+        let intentos = await Intento_examen.findAll({
+            include: [{
+                model: Examen,
+                where: { id_examen },
+                attributes: [],
+            }, {
+                model: Estudiante
+            }],
+            attributes: ['id_intento', 'numero_cuenta', 'calificacion'],
+            where: whereCondition
+        });
+
+        if (!intentos || intentos.length === 0) {
+            return {
+                status: 404,
+                ok: false,
+                msg: 'No hay intentos registrados para este examen',
+                calificaciones: [],
+                resumen: {}
+            };
+        }
+
+        // Procesamiento de calificaciones
+        let totalEstudiantes = intentos.length;
+        let sumaCalificaciones = 0;
+        let aprobados = 0;
+        let reprobados = 0;
+        let distribucionCalificaciones = [
+            { rango: "0-20", cantidad: 0 },
+            { rango: "21-40", cantidad: 0 },
+            { rango: "41-60", cantidad: 0 },
+            { rango: "61-80", cantidad: 0 },
+            { rango: "81-100", cantidad: 0 }
+        ];
+
+        let calificaciones = intentos.map(intento => {
+            console.log(intento.estudiante.nombre);
+            let calificacion = intento.calificacion;
+            sumaCalificaciones += calificacion;
+
+            if (calificacion >= 60) {
+                aprobados++;
+            } else {
+                reprobados++;
+            }
+
+            // Asignar a la distribución de calificaciones
+            if (calificacion <= 20) distribucionCalificaciones[0].cantidad++;
+            else if (calificacion <= 40) distribucionCalificaciones[1].cantidad++;
+            else if (calificacion <= 60) distribucionCalificaciones[2].cantidad++;
+            else if (calificacion <= 80) distribucionCalificaciones[3].cantidad++;
+            else distribucionCalificaciones[4].cantidad++;
+
+            return {
+                numero_cuenta: intento.numero_cuenta,
+                nombre: intento.estudiante.nombre,
+                apellido_paterno: intento.estudiante.apellido_paterno,
+                apellido_materno: intento.estudiante.apellido_materno ?? '',
+                calificacion
+            };
+        });
+
+        let promedioGeneral = (sumaCalificaciones / totalEstudiantes).toFixed(2);
+        let tasaAprobacion = ((aprobados / totalEstudiantes) * 100).toFixed(2);
+
+        let resumen = {
+            promedio_general: promedioGeneral,
+            total_estudiantes: totalEstudiantes,
+            tasa_aprobacion: tasaAprobacion,
+            distribucion_calificaciones: distribucionCalificaciones,
+            aprobacion: [
+                { name: "Aprobados", value: aprobados },
+                { name: "Reprobados", value: reprobados }
+            ]
+        };
+
+        return {
+            status: 200,
+            ok: true,
+            msg: null,
+            calificaciones,
+            resumen
+        };
+
+    } catch (error) {
+        console.log(error);
+        return {
+            status: 500,
+            ok: false,
+            msg: 'Error en el servidor',
+            calificaciones: [],
+            resumen: {}
         };
     }
 };
