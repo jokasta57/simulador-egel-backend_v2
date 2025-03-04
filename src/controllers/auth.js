@@ -1,14 +1,14 @@
 import { generarJWT } from "../helpers/jwt.js";
 import Estudiante from "../models/Estudiante.js";
-import { crearAdministradorService, loginService } from "../services/auth.js";
+import { crearAdministradorService, loginService, actualizarPasswordService } from "../services/auth.js";
 
 export const crearAdministrador = async (req, res) => {
     try {
 
-        const { nombre, numero_identificacion, nip } = req.body;
+        const { nombre, numero_identificacion, nip, apellido_paterno, apellido_materno } = req.body;
 
 
-        const { status, ok, msg, admin } = await crearAdministradorService(nombre, numero_identificacion, nip);
+        const { status, ok, msg, admin } = await crearAdministradorService(nombre, numero_identificacion, nip,  apellido_paterno, apellido_materno);
 
 
         res.status(status).json({
@@ -51,6 +51,27 @@ export const loginUsuario = async (req, res) => {
     }
 }
 
+export const actualizarPassword = async (req, res) => {
+    try {
+
+        const { numero_identificacion, nip_actual, nip_nuevo } = req.body;
+
+        const { ok, status, msg, } = await actualizarPasswordService(numero_identificacion, nip_actual, nip_nuevo);
+
+        res.status(status).json({
+            ok,
+            msg,
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: "Error en el servidor"
+        })
+    }
+}
+
 export const revalidarToken = async (req, res) => {
     try {
 
@@ -59,10 +80,11 @@ export const revalidarToken = async (req, res) => {
         const apellido_paterno = req.apellido_paterno;
         const apellido_materno = req.apellido_materno;
         const role = req.role;
+        const numero_identificacion = req.numero_identificacion;
         // console.log(req);
 
         //Generar un nuevo JWT y retornarlo en esta peticion
-        const token = await generarJWT(id, nombre, apellido_paterno,apellido_materno,  role);
+        const token = await generarJWT(id, nombre, apellido_paterno,apellido_materno,  role, numero_identificacion);
 
         let additionalInfo;
         if(role === 'student'){
@@ -75,7 +97,7 @@ export const revalidarToken = async (req, res) => {
 
         res.json({
             ok: true,
-            id, nombre, role, apellido_paterno, apellido_materno,
+            id, nombre, role, apellido_paterno, apellido_materno, numero_identificacion,
             token,
             ...additionalInfo
         })

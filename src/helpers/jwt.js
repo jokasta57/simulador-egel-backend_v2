@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken";
 
-export const generarJWT = ( uid, name, apellido_paterno, apellido_materno, role ) => {
-    console.log(role, 'roleee');
+export const generarJWT = ( uid, name, apellido_paterno, apellido_materno, role, numero_identificacion ) => {
 
     return new Promise((resolve, reject) => {
 
-        const payload = { uid, name, apellido_paterno, apellido_materno, role }
+        const payload = { uid, name, apellido_paterno, apellido_materno, role, numero_identificacion }
 
         jwt.sign( payload, process.env.SECRET_JWT_SEED, {
             expiresIn: '8h'
