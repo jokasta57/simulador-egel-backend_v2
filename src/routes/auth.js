@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { crearAdministrador, loginUsuario, revalidarToken } from '../controllers/auth.js';
+import { crearAdministrador, loginUsuario, revalidarToken, actualizarPassword } from '../controllers/auth.js';
 import { validarJWT } from '../middlewares/validar-jwt.js';
 import { loginValidators } from '../middlewares/validators/auth.js';
 import { crearAdminValidators } from '../middlewares/validators/auth.js';
@@ -11,5 +11,7 @@ router.post('/admin', crearAdminValidators, crearAdministrador);
 router.post('/admin/auth', loginValidators, loginUsuario);
 
 router.get('/users/renew', validarJWT, revalidarToken);
+
+router.put('/admin-password', validarJWT, actualizarPassword);
 
 export default router;  

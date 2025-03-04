@@ -364,19 +364,32 @@ export const obtenerCalificacionesYResumenService = async (id_examen, fechaInici
             where: whereCondition
         });
 
-        if (!intentos || intentos.length === 0) {
-            return {
-                status: 404,
-                ok: false,
-                msg: 'No hay intentos registrados para este examen',
-                calificaciones: [],
-                resumen: {}
-            };
-        }
+        // Mapa para agrupar intentos por estudiante
+        let alumnosMap = {};
 
-        // Procesamiento de calificaciones
-        let totalEstudiantes = intentos.length;
-        let sumaCalificaciones = 0;
+        intentos.forEach(intento => {
+            let numeroCuenta = intento.numero_cuenta;
+            let calificacion = intento.calificacion;
+
+            if (!alumnosMap[numeroCuenta]) {
+                alumnosMap[numeroCuenta] = {
+                    numero_cuenta: numeroCuenta,
+                    nombre: intento.estudiante.nombre,
+                    apellido_paterno: intento.estudiante.apellido_paterno,
+                    apellido_materno: intento.estudiante.apellido_materno ?? '-',
+                    total_intentos: 0,
+                    suma_calificaciones: 0
+                };
+            }
+
+            // Sumar intentos y calificaciones
+            alumnosMap[numeroCuenta].total_intentos++;
+            alumnosMap[numeroCuenta].suma_calificaciones += calificacion;
+        });
+
+        // Convertir el objeto en un array y calcular el promedio
+        let totalEstudiantes = Object.keys(alumnosMap).length;
+        let sumaCalificacionesGeneral = 0;
         let aprobados = 0;
         let reprobados = 0;
         let distribucionCalificaciones = [
@@ -387,34 +400,36 @@ export const obtenerCalificacionesYResumenService = async (id_examen, fechaInici
             { rango: "81-100", cantidad: 0 }
         ];
 
-        let calificaciones = intentos.map(intento => {
-            console.log(intento.estudiante.nombre);
-            let calificacion = intento.calificacion;
-            sumaCalificaciones += calificacion;
+        let calificaciones = Object.values(alumnosMap).map(alumno => {
+            let promedioCalificacion = (alumno.suma_calificaciones / alumno.total_intentos).toFixed(2);
+            let promedioNumerico = parseFloat(promedioCalificacion);
+            sumaCalificacionesGeneral += promedioNumerico;
 
-            if (calificacion >= 60) {
+            // Determinar si aprobó o reprobó
+            if (promedioNumerico >= 60) {
                 aprobados++;
             } else {
                 reprobados++;
             }
 
-            // Asignar a la distribución de calificaciones
-            if (calificacion <= 20) distribucionCalificaciones[0].cantidad++;
-            else if (calificacion <= 40) distribucionCalificaciones[1].cantidad++;
-            else if (calificacion <= 60) distribucionCalificaciones[2].cantidad++;
-            else if (calificacion <= 80) distribucionCalificaciones[3].cantidad++;
+            // Clasificar en la distribución de calificaciones
+            if (promedioNumerico <= 20) distribucionCalificaciones[0].cantidad++;
+            else if (promedioNumerico <= 40) distribucionCalificaciones[1].cantidad++;
+            else if (promedioNumerico <= 60) distribucionCalificaciones[2].cantidad++;
+            else if (promedioNumerico <= 80) distribucionCalificaciones[3].cantidad++;
             else distribucionCalificaciones[4].cantidad++;
 
             return {
-                numero_cuenta: intento.numero_cuenta,
-                nombre: intento.estudiante.nombre,
-                apellido_paterno: intento.estudiante.apellido_paterno,
-                apellido_materno: intento.estudiante.apellido_materno ?? '',
-                calificacion
+                numero_cuenta: alumno.numero_cuenta,
+                nombre: alumno.nombre,
+                apellido_paterno: alumno.apellido_paterno,
+                apellido_materno: alumno.apellido_materno,
+                calificacion: promedioCalificacion,
+                total_intentos: alumno.total_intentos
             };
         });
 
-        let promedioGeneral = (sumaCalificaciones / totalEstudiantes).toFixed(2);
+        let promedioGeneral = (sumaCalificacionesGeneral / totalEstudiantes).toFixed(2);
         let tasaAprobacion = ((aprobados / totalEstudiantes) * 100).toFixed(2);
 
         let resumen = {
@@ -423,8 +438,8 @@ export const obtenerCalificacionesYResumenService = async (id_examen, fechaInici
             tasa_aprobacion: tasaAprobacion,
             distribucion_calificaciones: distribucionCalificaciones,
             aprobacion: [
-                { name: "Aprobados", value: aprobados },
-                { name: "Reprobados", value: reprobados }
+                { name: "Aprobados", value: (tasaAprobacion * 1) },
+                { name: "Reprobados", value: (100 - tasaAprobacion) }
             ]
         };
 
@@ -435,7 +450,6 @@ export const obtenerCalificacionesYResumenService = async (id_examen, fechaInici
             calificaciones,
             resumen
         };
-
     } catch (error) {
         console.log(error);
         return {

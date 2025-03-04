@@ -31,13 +31,20 @@ const Admin = conexion.define('admin', {
     },
     superAdmin: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
+        allowNull: false,
+        defaultValue: false
     }
 }, {
     hooks: {
         beforeCreate: async function(administrador){
             const salt = await bcrypt.genSalt(10)
             administrador.nip = await bcrypt.hash(administrador.nip, salt);
+        },
+        beforeUpdate: async function(administrador){
+            if (administrador.changed("nip")) { // Solo rehashea si cambió el NIP
+                const salt = await bcrypt.genSalt(10);
+                administrador.nip = await bcrypt.hash(administrador.nip, salt);
+            }
         }
     }
 })

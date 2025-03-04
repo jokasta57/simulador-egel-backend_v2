@@ -1,8 +1,10 @@
 import { generarJWT } from "../helpers/jwt.js";
 import Admin from "../models/Admin.js";
 import { Sequelize } from 'sequelize';
+import bcrypt from 'bcrypt';
 
-export const crearAdministradorService = async(nombre, numero_identificacion, nip) => {
+
+export const crearAdministradorService = async(nombre, numero_identificacion, nip, apellido_paterno, apellido_materno) => {
     try {
         //Verificar que no haya duplicados
         const existeUsuario = await Admin.findOne({ where: { numero_identificacion } });
@@ -17,7 +19,9 @@ export const crearAdministradorService = async(nombre, numero_identificacion, ni
         const admin = await Admin.create({
             nombre, 
             numero_identificacion, 
-            nip
+            nip,
+            apellido_paterno, 
+            apellido_materno,
         })
 
 
@@ -67,7 +71,7 @@ export const loginService = async( numero_identificacion, nip) => {
         admin.role = role;
 
         //Generar JWT
-        const token = await generarJWT(admin.id_admin, admin.nombre, admin.apellido_paterno, admin.apellido_materno, role);
+        const token = await generarJWT(admin.id_admin, admin.nombre, admin.apellido_paterno, admin.apellido_materno, role, admin.numero_identificacion);
         
         return {
             ok: true,
@@ -75,6 +79,51 @@ export const loginService = async( numero_identificacion, nip) => {
             msg: 'Usuario autenticado exitosamente',
             token,
             admin
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return {
+            status: 500,
+            msg: 'Error en el servidor'
+        }
+    }
+}
+
+export const actualizarPasswordService = async(numero_identificacion, nip_actual, nip_nuevo) => {
+    try {
+        //Verificar que el usuario exista
+        const admin = await Admin.findOne({ where: {numero_identificacion } });
+        if(!admin){
+            return {
+                ok: false,
+                status: 404,
+                msg: 'El usuario no está registrado',
+                token: null
+            }
+        }
+
+        // Verificar nip
+        const nipValido = await bcrypt.compare(nip_actual, admin.nip);
+        if (!nipValido) {
+            return {
+                ok: false,
+                status: 401,
+                msg: "Verifica tus credenciales e intenta de nuevo.",
+                token: null
+            };
+        }
+
+         // Actualizar y guardar la nueva contraseña
+         admin.nip = nip_nuevo;
+         await admin.save(); // Esto dispara el hook `beforeUpdate`
+        
+        return {
+            ok: true,
+            status: 200,
+            msg: 'Contraseña actualizada exitosamente',
+            // admin
         }
 
 
