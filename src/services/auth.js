@@ -110,7 +110,7 @@ export const actualizarPasswordService = async(numero_identificacion, nip_actual
             return {
                 ok: false,
                 status: 401,
-                msg: "Verifica tus credenciales e intenta de nuevo.",
+                msg: "Verifica tu NIP actual e intenta de nuevo.",
                 token: null
             };
         }
