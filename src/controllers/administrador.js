@@ -4,10 +4,10 @@ import { crearAdministradorService, obtenerAdministradoresService, actualizarAdm
 export const crearAdministrador = async (req, res) => {
     try {
 
-        const { nombre, numero_identificacion, nip, apellido_paterno, apellido_materno } = req.body;
+        const { nombre, numero_identificacion, nip, apellido_paterno, apellido_materno, carrera } = req.body;
 
 
-        const { status, ok, msg, admin } = await crearAdministradorService(nombre, numero_identificacion, nip,  apellido_paterno, apellido_materno);
+        const { status, ok, msg, admin } = await crearAdministradorService(nombre, numero_identificacion, nip,  apellido_paterno, apellido_materno, carrera);
 
 
         res.status(status).json({
@@ -50,15 +50,16 @@ export const obtenerAdministradores = async (req, res) => {
 }
 
 export const actualizarAdministrador = async (req, res) => {
+    const {id_admin} = req.params;
+    const newData = req.body
     try {
 
-        const { status, ok, msg, administradores } = await actualizarAdministradorService();
+        const { status, ok, msg } = await actualizarAdministradorService(id_admin, newData);
 
 
         res.status(status).json({
             ok,
-            msg,
-            administradores
+            msg
         })
 
 
@@ -72,15 +73,15 @@ export const actualizarAdministrador = async (req, res) => {
 }
 
 export const eliminarAdministrador = async (req, res) => {
+    const {id_admin} = req.params;
     try {
 
-        const { status, ok, msg, administradores } = await eliminarAdministradorService();
+        const { status, ok, msg } = await eliminarAdministradorService(id_admin);
 
 
         res.status(status).json({
             ok,
-            msg,
-            administradores
+            msg
         })
 
 

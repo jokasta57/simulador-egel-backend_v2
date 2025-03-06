@@ -29,6 +29,10 @@ const Admin = conexion.define('admin', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    carrera: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
     superAdmin: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

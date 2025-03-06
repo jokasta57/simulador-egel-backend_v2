@@ -1,5 +1,6 @@
 import {Router} from 'express';
 import { validarJWT, validarRol } from '../middlewares/validar-jwt.js';
+import { crearAdminValidators } from '../middlewares/validators/administrador.js';
 import { obtenerAdministradores, crearAdministrador, actualizarAdministrador, eliminarAdministrador  } from '../controllers/administrador.js';
 
 const router = Router();
@@ -7,9 +8,9 @@ const router = Router();
 //El usuario debe estar logueado para poder hacer peticiones
 router.use( validarJWT );
 
-router.get('/', validarRol(['superAdmin']), obtenerAdministradores);
+router.post('/', validarRol(['superAdmin']), crearAdminValidators, crearAdministrador);
 
-router.post('/', validarRol(['superAdmin']), crearAdministrador);
+router.get('/', validarRol(['superAdmin']), obtenerAdministradores);
 
 router.put('/:id_admin', validarRol(['superAdmin']), actualizarAdministrador);
 

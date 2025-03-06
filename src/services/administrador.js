@@ -1,6 +1,6 @@
 import Admin from "../models/Admin.js";
 
-export const crearAdministradorService = async(nombre, numero_identificacion, nip, apellido_paterno, apellido_materno) => {
+export const crearAdministradorService = async(nombre, numero_identificacion, nip, apellido_paterno, apellido_materno, carrera) => {
     try {
         //Verificar que no haya duplicados
         const existeUsuario = await Admin.findOne({ where: { numero_identificacion } });
@@ -18,6 +18,7 @@ export const crearAdministradorService = async(nombre, numero_identificacion, ni
             nip,
             apellido_paterno, 
             apellido_materno,
+            carrera
         })
 
 
@@ -42,7 +43,7 @@ export const obtenerAdministradoresService = async() => {
     try {
         
         const administradores = await Admin.findAll({
-            attributes: ['id_admin', 'nombre', 'apellido_paterno', 'apellido_materno', 'numero_identificacion']
+            attributes: ['id_admin', 'nombre', 'apellido_paterno', 'apellido_materno', 'numero_identificacion', 'carrera']
         },{
             where: {
                 superAdmin: false
@@ -75,25 +76,28 @@ export const obtenerAdministradoresService = async() => {
     }
 }
 
-export const actualizarAdministradorService = async() => {
+export const actualizarAdministradorService = async(id_admin, newData) => {
     try {
-        
-        const administradores = await Admin.findAll({where: {superAdmin: false}});
 
-        if(!administradores) { 
+        console.log(newData);
+        
+        const administrador = await Admin.findOne({where: {id_admin}});
+
+        if(!administrador) { 
             return  {
                 ok: false,
                 status: 404,
-                msg: 'No se encontraron administradores',
+                msg: 'Este administrador no existe',
                 administradores: null
             }
         }
 
+        await Admin.update(newData, {where: {id_admin}})
+
         return {
             ok: true, 
             status: 200,
-            msg: "",
-            administradores
+            msg: "Administrador actualizado exitosamente"
         };
 
     } catch (error) {
@@ -106,25 +110,26 @@ export const actualizarAdministradorService = async() => {
     }
 }
 
-export const eliminarAdministradorService = async() => {
+export const eliminarAdministradorService = async(id_admin) => {
     try {
         
-        const administradores = await Admin.findAll({where: {superAdmin: false}});
+        const administrador = await Admin.findOne({where: {id_admin}});
 
-        if(!administradores) { 
+        if(!administrador) { 
             return  {
                 ok: false,
                 status: 404,
-                msg: 'No se encontraron administradores',
+                msg: 'Este administrador no existe',
                 administradores: null
             }
         }
 
+        await Admin.destroy({where: {id_admin}})
+
         return {
             ok: true, 
             status: 200,
-            msg: "",
-            administradores
+            msg: "Administrador eliminado exitosamente",
         };
 
     } catch (error) {
