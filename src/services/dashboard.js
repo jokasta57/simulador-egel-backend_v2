@@ -160,7 +160,7 @@ export const obtenerBorradoresService = async (carrera) => {
             }
         })
 
-        if (!borradores) return {
+        if (borradores.length === 0) return {
             status: 404,
             ok: false,
             msg: 'No hay borradores disponibles'
@@ -309,14 +309,15 @@ export const obtenerUltimoExamenAplicadoService = async(carrera) => {
             }],
             order: [["fecha_aplicacion", 'DESC']]
         })
+        console.log(examen);
 
-        if(!examen) { 
+        if (!examen || examen.length === 0) { 
             return {
                 status: 404,
                 ok: false,
-                msg: "No se han aplicado exámenes",
+                msg: "No hay exámenes aún",
                 examen: null
-            }
+            };
         }
 
         return {
@@ -361,7 +362,7 @@ export const obtenerCalificacionesYResumenService = async (id_examen, fechaInici
                 model: Estudiante
             }],
             attributes: ['id_intento', 'numero_cuenta', 'calificacion'],
-            where: whereCondition
+            where: whereCondition,
         });
 
         // Mapa para agrupar intentos por estudiante

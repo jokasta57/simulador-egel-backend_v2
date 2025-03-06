@@ -43,18 +43,17 @@ export const obtenerAdministradoresService = async() => {
     try {
         
         const administradores = await Admin.findAll({
-            attributes: ['id_admin', 'nombre', 'apellido_paterno', 'apellido_materno', 'numero_identificacion', 'carrera']
-        },{
+            attributes: ['id_admin', 'nombre', 'apellido_paterno', 'apellido_materno', 'numero_identificacion', 'carrera'],
             where: {
-                superAdmin: false
+                superAdmin: 0 || false
             }
         });
 
-        if(!administradores) { 
+        if(administradores.length === 0) { 
             return  {
                 ok: false,
                 status: 404,
-                msg: 'No se encontraron administradores',
+                msg: 'No hay administradores disponibles.',
                 administradores: null
             }
         }
