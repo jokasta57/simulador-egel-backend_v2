@@ -8,7 +8,7 @@ export const obtenerPorcentajeAprobadoService = async (carrera) => {
     try {
         //Numero de examenes
         const examenes = await Examen.findAll({ where: { carrera } });
-        if (!examenes) return {
+        if (!examenes || examenes.length === 0) return {
             status: 404,
             ok: false,
             historialAprobados: null,

@@ -123,7 +123,6 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
     let respuestas = {}
 
     try {
-
         //Obtiene informacion del examen
         const examen = await Intento_examen.findOne({
             include: {
@@ -207,6 +206,7 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
     let respuestas = {}
 
     try {
+
         const offset = (page - 1) * limit;
 
         //Obtiene informacion del examen

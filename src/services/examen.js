@@ -108,10 +108,10 @@ export const editarEstadoExamenService = async(estado, id_examen) => {
 
 export const obtenerExamenService = async() => {
     try {
-        
         const examenes = await Examen.findAll();
 
-        if(!examenes) {
+
+        if(!examenes || examenes.length === 0) {
             return {
                 ok: false,
                 status: 404,
@@ -139,8 +139,7 @@ export const obtenerExamenService = async() => {
 }
 
 export const obtenerExamenPorCarreraService = async(carrera) => {
-    try {
-        
+    try {        
         const examenes = await Examen.findAll({where: {carrera, estado: "activo"}});
 
         if(!examenes) {
