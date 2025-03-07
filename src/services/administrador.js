@@ -40,8 +40,7 @@ export const crearAdministradorService = async(nombre, numero_identificacion, ni
 }
 
 export const obtenerAdministradoresService = async() => {
-    try {
-        
+    try {        
         const administradores = await Admin.findAll({
             attributes: ['id_admin', 'nombre', 'apellido_paterno', 'apellido_materno', 'numero_identificacion', 'carrera'],
             where: {

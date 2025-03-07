@@ -45,7 +45,7 @@ export const crearAdministradorService = async(nombre, numero_identificacion, ni
 export const loginService = async( numero_identificacion, nip) => {
     try {
         //Verificar que el usuario exista
-        const admin = await Admin.findOne({ where: {numero_identificacion } });
+        const admin = await Admin.findOne({ where: { numero_identificacion } });
         if(!admin){
             return {
                 ok: false,
@@ -71,7 +71,7 @@ export const loginService = async( numero_identificacion, nip) => {
         admin.role = role;
 
         //Generar JWT
-        const token = await generarJWT(admin.id_admin, admin.nombre, admin.apellido_paterno, admin.apellido_materno, role, admin.numero_identificacion);
+        const token = await generarJWT(admin.id_admin, admin.nombre, admin.apellido_paterno, admin.apellido_materno, role, admin.numero_identificacion, admin.carrera);
         
         return {
             ok: true,
