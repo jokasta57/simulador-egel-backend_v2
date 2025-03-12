@@ -315,7 +315,7 @@ export const obtenerUltimoExamenAplicadoService = async(carrera) => {
             return {
                 status: 404,
                 ok: false,
-                msg: "No hay exámenes aún",
+                msg: "No hay datos disponibles sobre exámenes aplicados hasta el momento.",
                 examen: null
             };
         }
