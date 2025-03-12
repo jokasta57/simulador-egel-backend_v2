@@ -86,6 +86,15 @@ export const editarEstadoExamenService = async(estado, id_examen) => {
     try {
         const examen = await Examen.findByPk(id_examen)
 
+        if(!examen || examen === 0) {
+            return {
+                ok: false,
+                status: 404,
+                msg: 'Este examen ya no está disponible',
+                examen: null
+            }
+        }
+
         //Crear nuevo estudiante
         await Examen.update({estado}, {where: {id_examen}})
 
@@ -101,14 +110,15 @@ export const editarEstadoExamenService = async(estado, id_examen) => {
         return {
             ok: false,
             status: 500,
-            msg: 'Error en el servidor'
+            msg: 'Error en el servidor',
+            examen: null
         };
     }
 }
 
-export const obtenerExamenService = async() => {
+export const obtenerExamenService = async(carrera) => {
     try {
-        const examenes = await Examen.findAll();
+        const examenes = await Examen.findAll({where: {carrera}});
 
 
         if(!examenes || examenes.length === 0) {
