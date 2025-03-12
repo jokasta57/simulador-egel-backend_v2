@@ -122,3 +122,38 @@ export const obtenerInfoDelEstudianteService = async(numero_cuenta) => {
         }
     }
 }
+
+export const actualizarInfoEstudianteService = async(numero_cuenta, updateData) => {
+    try {
+        //Verificar que el usuario exista
+        const estudiante = await Estudiante.findOne({ 
+            where: { 
+                numero_cuenta 
+            }
+        });
+
+        if(!estudiante || estudiante.length === 0){
+            return {
+                ok: false,
+                status: 404,
+                msg: 'Este usurio no existe',
+            }
+        }
+
+        await Estudiante.update(updateData, { where: { numero_cuenta } })
+
+        return {
+            ok: true,
+            status: 200,
+            msg: 'Usuario autenticado exitosamente',
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return {
+            status: 500,
+            msg: 'Error en el servidor'
+        }
+    }
+}

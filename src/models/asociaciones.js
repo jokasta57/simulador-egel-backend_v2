@@ -17,7 +17,7 @@ Intento_examen.belongsTo(Estudiante, {foreignKey: 'numero_cuenta'});
 Examen.hasMany(Intento_examen, {foreignKey: 'id_examen'})
 Intento_examen.belongsTo(Examen, {foreignKey: 'id_examen'});
 
-Opcion.hasMany(Respuesta, {foreignKey: 'id_opcion'})
+Opcion.hasMany(Respuesta, {foreignKey: 'id_opcion', onDelete: 'CASCADE'})
 Respuesta.belongsTo(Opcion, {foreignKey: 'id_opcion'});
 
 Intento_examen.hasMany(Respuesta, {foreignKey: 'id_intento'})

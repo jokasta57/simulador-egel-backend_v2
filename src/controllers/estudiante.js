@@ -1,4 +1,4 @@
-import { crearEstudianteService, loginEstudianteService, obtenerInfoDelEstudianteService } from "../services/estudiante.js";
+import { crearEstudianteService, loginEstudianteService, obtenerInfoDelEstudianteService, actualizarInfoEstudianteService } from "../services/estudiante.js";
 
 export const crearEstudiante = async (req, res) => {
     try {
@@ -54,6 +54,27 @@ export const obtenerInfoDelEstudiante = async (req, res) => {
             ok,
             msg,
             estudiante
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: "Error en el servidor"
+        })
+    }
+}
+
+export const actualizarInfoEstudiante = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+        const updateData = req.body;
+
+        const { ok, status, msg } = await actualizarInfoEstudianteService(id, updateData);
+
+        res.status(status).json({
+            ok,
+            msg
         })
 
     } catch (error) {

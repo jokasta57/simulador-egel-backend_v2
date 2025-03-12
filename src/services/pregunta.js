@@ -247,7 +247,6 @@ export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
     try {
         //Verificamos que la pregunta exista
         const pregunta = await Pregunta.findOne({where: {id_pregunta}})
-        console.log(pregunta);
 
         //Verificar que no haya preguntas duplicadas
         const preguntaDisponible = await Pregunta.findOne({
@@ -290,7 +289,6 @@ export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
             preguntaActualizada.imagen_url = url_recurso;
             preguntaActualizada.public_id_imagen = public_id;
         }
-        console.log(preguntaActualizada);
         return {
             ok: true,
             status: 201,
@@ -299,7 +297,6 @@ export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
