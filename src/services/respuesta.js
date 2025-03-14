@@ -2,7 +2,6 @@ import { Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociacio
 
 export const crearRespuestaService = async (id_intento, id_opcion) => {
     try {
-
         const intentoExistente = await Intento_examen.findOne({ where: { id_intento } });
 
         if (!intentoExistente) {
@@ -81,7 +80,6 @@ export const obtenerRespuestaPorIdService = async (id_respuesta) => {
         }
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,

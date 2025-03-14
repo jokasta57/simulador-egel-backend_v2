@@ -3,11 +3,12 @@ import { crearEstudianteService, loginEstudianteService, obtenerInfoDelEstudiant
 export const crearEstudiante = async (req, res) => {
     try {
         //req.body es enviado como data
-        const { status, ok, msg, estudiante } = await crearEstudianteService(req.body);
+        const { status, ok, msg, token, estudiante } = await crearEstudianteService(req.body);
 
         res.status(status).json({
             ok,
             msg,
+            token,
             estudiante
         })
 
@@ -66,7 +67,6 @@ export const obtenerInfoDelEstudiante = async (req, res) => {
 
 export const actualizarInfoEstudiante = async (req, res) => {
     try {
-
         const { id } = req.params;
         const updateData = req.body;
 

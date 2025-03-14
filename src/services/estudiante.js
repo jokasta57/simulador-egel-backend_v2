@@ -1,8 +1,9 @@
 import { generarJWT } from "../helpers/jwt.js";
 import Estudiante from "../models/Estudiante.js";
 
-export const crearEstudianteService = async({nombre, apellido_paterno, email, numero_cuenta, carrera, semestre, grupo, ciclo_escolar,nip}) => {
+export const crearEstudianteService = async({nombre, apellido_paterno, apellido_materno, email, numero_cuenta, carrera, semestre, grupo, ciclo_escolar,nip}) => {
     try {
+        await new Promise(resolve => setTimeout(resolve, 4000));
         //Verificar que no haya duplicados
         const existeUsuario = await Estudiante.findOne({ where: { numero_cuenta } });
         if (existeUsuario) {
@@ -16,6 +17,7 @@ export const crearEstudianteService = async({nombre, apellido_paterno, email, nu
         const estudiante = await Estudiante.create({
             nombre, 
             apellido_paterno, 
+            apellido_materno,
             email, 
             numero_cuenta, 
             carrera, 
@@ -25,15 +27,19 @@ export const crearEstudianteService = async({nombre, apellido_paterno, email, nu
             nip
         })
 
+        const role = 'student'
+
+        const token = await generarJWT(estudiante.numero_cuenta, estudiante.nombre,estudiante.apellido_paterno, estudiante.apellido_materno, role);
+
         return {
             ok: true, 
             status: 201,
             msg: "Estudiante registrado exitosamente",
+            token,
             estudiante
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -124,7 +130,7 @@ export const obtenerInfoDelEstudianteService = async(numero_cuenta) => {
 }
 
 export const actualizarInfoEstudianteService = async(numero_cuenta, updateData) => {
-    try {
+    try { 
         //Verificar que el usuario exista
         const estudiante = await Estudiante.findOne({ 
             where: { 

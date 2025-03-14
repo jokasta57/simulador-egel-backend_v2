@@ -152,7 +152,7 @@ export const obtenerExamenPorCarreraService = async(carrera) => {
     try {        
         const examenes = await Examen.findAll({where: {carrera, estado: "activo"}});
 
-        if(!examenes) {
+        if(!examenes || examenes.length === 0) {
             return {
                 ok: false,
                 status: 404,
@@ -170,7 +170,6 @@ export const obtenerExamenPorCarreraService = async(carrera) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,

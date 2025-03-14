@@ -1,11 +1,21 @@
 import { col, fn, literal } from "sequelize";
-import { Examen, Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociaciones.js"
+import { Estudiante, Examen, Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociaciones.js"
 
 export const obtenerResultadosService = async (numero_cuenta) => {
     let resultados = {};
     let historialExamenes = {};
-
     try {
+        const estudianteExiste = await Estudiante.findOne({where: {numero_cuenta}});
+        if(!estudianteExiste) {
+            return {
+                status: 404,
+                ok: false,
+                msg: 'No se encontraron registros para este número de cuenta',
+                resultados: null,
+                historialExamenes: null
+            }
+        }
+
         historialExamenes = await Intento_examen.findAll({
             attributes: [
                 [col("Examen.nombre"), "nombre"],
@@ -23,6 +33,7 @@ export const obtenerResultadosService = async (numero_cuenta) => {
                 ]
             ],
             include: [{ model: Examen, attributes: [] }],
+            // where: { numero_cuenta },
             where: { numero_cuenta },
             order: [["id_examen", "ASC"], ["fecha_aplicacion", "ASC"], ["id_intento", "ASC"]]
         });
@@ -107,7 +118,6 @@ export const obtenerResultadosService = async (numero_cuenta) => {
         }
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
@@ -119,9 +129,7 @@ export const obtenerResultadosService = async (numero_cuenta) => {
 }
 
 export const obtenerCalificacionPorIntentoService = async (id_intento) => {
-
     let respuestas = {}
-
     try {
         //Obtiene informacion del examen
         const examen = await Intento_examen.findOne({
@@ -133,11 +141,11 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
             }
         })
 
-        if (!examen) {
+        if (!examen || examen.length === 0) {
             return {
                 status: 404,
                 ok: false,
-                msg: 'Este intento no existe',
+                msg: "El intento de examen que buscas no existe o ha sido eliminado.",
                 examen: null,
                 respuestas: null
             }
@@ -168,10 +176,6 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
             }
         })
 
-
-
-        console.log(respuestas);
-
         // Genera el mensaje de recomendación según la calificación
         if (respuestas.calificacionFinal >= 90) {
             respuestas.mensaje = "¡Felicidades por tu desempeño!";
@@ -194,7 +198,7 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
         return {
             status: 500,
             ok: false,
-            msg: null,
+            msg: 'Error en el servidor',
             examen: null,
             respuestas: null
         }
@@ -218,6 +222,16 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
                 id_intento
             }
         })
+
+        if (!intento || intento.length === 0) {
+            return {
+                status: 404,
+                ok: false,
+                msg: "El intento de examen que buscas no existe o ha sido eliminado.",
+                examen: null,
+                respuestas: null
+            }
+        }
 
         let numeroIntento = await Intento_examen.findAll({
             attributes: ['id_intento'],
@@ -304,7 +318,6 @@ export const obtenerRevisionPorIntentoService = async (id_intento, page, limit) 
         };
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
@@ -373,7 +386,6 @@ export const obtenerPreguntasParaPanelService = async (id_intento) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
