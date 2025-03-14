@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { crearEstudiantesValidators } from '../middlewares/validators/estudiantes.js';
+import { actualizarInfoEstudianteValidators, crearEstudiantesValidators } from '../middlewares/validators/estudiantes.js';
 import { crearEstudiante,loginEstudiante, obtenerInfoDelEstudiante, actualizarInfoEstudiante } from '../controllers/estudiante.js';
 import { validarJWT } from '../middlewares/validar-jwt.js';
 
@@ -10,6 +10,6 @@ router.post('/auth', loginEstudiante);
 
 router.get('/:id', validarJWT, obtenerInfoDelEstudiante);
 
-router.put('/:id', validarJWT, crearEstudiantesValidators, actualizarInfoEstudiante);
+router.put('/:id', validarJWT, actualizarInfoEstudianteValidators, actualizarInfoEstudiante);
 
 export default router;  
