@@ -4,6 +4,7 @@ import Examen from "../models/Examen.js";
 
 export const crearExamenService = async({carrera, nombre, periodo, duracion}) => {
     try {
+        await new Promise(res => setTimeout(res, 2000));
         const fecha = new Date();
         //Verificar que no haya duplicados
         const nombreDisponible = await Examen.findOne({ where: { nombre } });
@@ -44,6 +45,14 @@ export const crearExamenService = async({carrera, nombre, periodo, duracion}) =>
 export const editarExamenService = async(updateInfo, id_examen) => {
     try {
         const examen = await Examen.findByPk(id_examen)
+
+        if(!examen || examen.length === 0) {
+            return {
+                ok: false,
+                status: 404,
+                msg: 'El examen no existe o ha sido eliminado'
+            }
+        }
 
         const fecha = new Date();
         updateInfo.fecha_modificacion = fecha;

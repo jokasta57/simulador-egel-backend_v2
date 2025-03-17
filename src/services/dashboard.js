@@ -341,7 +341,6 @@ export const obtenerUltimoExamenAplicadoService = async(carrera) => {
 
 export const obtenerCalificacionesYResumenService = async (id_examen, fechaInicio, fechaFin) => {
     try {
-        console.log(fechaInicio, fechaFin);
         // Construcción de la condición opcional de fechas
         let whereCondition = { id_examen };
 
@@ -352,7 +351,7 @@ export const obtenerCalificacionesYResumenService = async (id_examen, fechaInici
         } else if (fechaFin) {
             whereCondition.fecha_aplicacion = { [Op.lte]: fechaFin };
         }
-
+        
         let intentos = await Intento_examen.findAll({
             include: [{
                 model: Examen,

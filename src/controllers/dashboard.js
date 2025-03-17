@@ -102,7 +102,6 @@ export const obtenerUltimoExamenAplicado = async(req, res) => {
 export const obtenerCalificacionesYResumen = async(req, res) => {
     const { fechaInicio, fechaFin } = req.query
     const { id_examen } = req.params
-
     try {
         const { status, ok , msg, calificaciones, resumen } = await obtenerCalificacionesYResumenService(id_examen , fechaInicio, fechaFin);
 
