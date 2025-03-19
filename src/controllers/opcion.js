@@ -6,6 +6,7 @@ export const crearOpcion = async (req, res) => {
         const { id_pregunta } = req.query;
         const { contenido, es_correcta } = req.body;
         const imagen = req.file;
+        console.log(id_pregunta, contenido, es_correcta, imagen);
 
         const { status, ok, msg, opcion } = await crearOpcionService(id_pregunta, contenido, es_correcta, imagen);
 

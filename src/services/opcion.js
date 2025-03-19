@@ -143,12 +143,16 @@ export const editarOpcionService = async (id_opcion, contenido, es_correcta, ima
 
         //Verificar que no haya preguntas duplicadas
         const opcionExistente = await Opcion.findOne({
-            where: {
-                contenido,
-                id_pregunta: opcion.id_pregunta,
-                id_opcion: { [Op.ne]: id_opcion } // Asegura que no sea la misma pregunta
+            where:  {
+                [Op.and]: [
+                    { contenido: { [Op.eq]: contenido } }, // Verifica que el contenido sea el mismo
+                    { id_pregunta: opcion.id_pregunta }, // Debe pertenecer a la misma pregunta
+                    { id_opcion: { [Op.ne]: id_opcion } }, // No debe ser la misma opción
+                    { contenido: { [Op.ne]: "" } } // Evita que compare con contenido vacío
+                ]
             }
         });
+        console.log(opcionExistente);
 
         //Revisa el duplicado
         if (opcionExistente) {
