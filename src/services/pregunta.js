@@ -70,7 +70,6 @@ export const crearPreguntaService = async (id_examen, orden, contenido, imagen) 
 
 export const obtenerPreguntaPorIdService = async (id_pregunta) => {
     try {
-        console.log(id_pregunta);
         //Buscamos la pregunta con ese id
         const pregunta = await Pregunta.findOne({
             where: {
