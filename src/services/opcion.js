@@ -6,6 +6,7 @@ export const crearOpcionService = async(id_pregunta, contenido, es_correcta, ima
     try {
         //Verificar que no haya preguntas duplicadas
         const opcionDisponible = await Opcion.findOne({ where: { contenido, id_pregunta } });
+        console.log(opcionDisponible);
         if (opcionDisponible) {
             return {
                 ok: false,
@@ -84,11 +85,41 @@ export const eliminarOpcionService = async(id_opcion) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
             msg: 'Error en el servidor'
+        };
+    }
+}
+
+export const obtenerOpcionService = async(id_opcion) => {
+    try {
+        const opcion = await Opcion.findOne({where: {id_opcion}});
+
+        if (!opcion) {
+            return {
+                ok: false,
+                status: 404,
+                msg: 'Esta opcion no existe',
+                opcion: null
+            }
+        }
+
+        return {
+            ok: true, 
+            status: 201,
+            msg: "Opcion eliminada exitosamente",
+            opcion
+        };
+
+    } catch (error) {
+        console.log(error);
+        return {
+            ok: false,
+            status: 500,
+            msg: 'Error en el servidor',
+            opcion: null
         };
     }
 }
