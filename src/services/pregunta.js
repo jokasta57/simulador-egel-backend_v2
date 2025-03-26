@@ -244,6 +244,7 @@ export const obtenerPreguntaYRespuestaService = async (id_examen, orden, id_inte
 
 export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
     try {
+        console.log(id_pregunta, contenido, imagen);
         //Verificamos que la pregunta exista
         const pregunta = await Pregunta.findOne({where: {id_pregunta}})
 
@@ -267,6 +268,7 @@ export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
         const preguntaActualizada = await Pregunta.update({ contenido }, { where: { id_pregunta } })
 
         if (imagen) {
+            console.log('si hay',imagen);
             //Eliminamos la imagen anterior
             await eliminarCloudinary(pregunta.public_id_imagen);
 
@@ -288,6 +290,7 @@ export const editarPreguntaService = async (id_pregunta, contenido, imagen) => {
             preguntaActualizada.imagen_url = url_recurso;
             preguntaActualizada.public_id_imagen = public_id;
         }
+        console.log('no hay');
         return {
             ok: true,
             status: 201,

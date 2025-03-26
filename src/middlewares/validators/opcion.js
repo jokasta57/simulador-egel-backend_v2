@@ -9,11 +9,6 @@ export const crearOpcionValidators =  [  //Middlewares
     check('contenido_imagen').custom((value, { req }) => {
         const { contenido, imagen_url } = req.body;
         const imagen = req.file; // Aquí obtenemos el archivo de la imagen
-
-        console.log('contenido',contenido);
-        console.log('imagen',imagen_url);
-        console.log('imagenesss',imagen);
-
         if (!contenido && !imagen_url && !imagen) {
             throw new Error('Debe haber al menos contenido o una imagen');
         }
