@@ -32,7 +32,7 @@ export const loginUsuario = async (req, res) => {
     try {
 
         const { numero_identificacion, nip } = req.body;
-
+        
         const { ok, status, msg, token, admin } = await loginService(numero_identificacion, nip);
 
         res.status(status).json({
