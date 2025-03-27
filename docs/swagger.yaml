@@ -1,0 +1,3724 @@
+openapi: 3.0.0
+info:
+  title: API de Administradores, Estudiantes, Exámenes, Preguntas y Opciones
+  description: API para gestionar administradores, estudiantes, exámenes, preguntas y opciones en el sistema
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+  description: Servidor local de desarrollo
+
+# Define all components in the main file
+components:
+  schemas:
+    Examen:
+      type: object
+      properties:
+        id_examen:
+          type: integer
+          description: ID único del examen
+          example: 1
+        carrera:
+          type: string
+          description: Carrera o área del examen
+          example: "Ingeniería en Sistemas"
+        nombre:
+          type: string
+          description: Nombre del examen
+          example: "Examen de Matemáticas"
+        periodo:
+          type: string
+          description: Periodo o ciclo en el que se aplica el examen
+          example: "2025-1"
+        duracion:
+          type: string
+          format: time
+          description: Duración del examen en formato de hora (hh:mm:ss)
+          example: "02:00:00"
+        fecha_modificacion:
+          type: string
+          format: date
+          description: Fecha de la última modificación del examen
+          example: "2025-01-15"
+        estado:
+          type: string
+          description: Estado del examen (activo o borrador)
+          enum:
+          - "activo"
+          - "borrador"
+          example: "activo"
+        area:
+          type: string
+          description: Área asociada al examen (opcional)
+          example: "Matemáticas"
+
+    Pregunta:
+      type: object
+      properties:
+        id_pregunta:
+          type: integer
+          description: ID único de la pregunta
+          example: 1
+        contenido:
+          type: string
+          description: Enunciado de la pregunta
+          example: "¿Cuál es la capital de Francia?"
+        imagen_url:
+          type: string
+          description: URL de la imagen asociada a la pregunta
+          example: "https://res.cloudinary.com/example/image/upload/v1234567890/imagenes_preguntas/abcdef.jpg"
+        orden:
+          type: integer
+          description: Orden de la pregunta en el examen
+          example: 1
+        id_examen:
+          type: integer
+          description: ID del examen al que pertenece la pregunta
+          example: 1
+
+    Opcion:
+      type: object
+      properties:
+        id_opcion:
+          type: integer
+          description: ID único de la opción
+          example: 1
+        contenido:
+          type: string
+          description: Texto de la opción
+          example: "París"
+        es_correcta:
+          type: boolean
+          description: Indica si la opción es correcta
+          example: true
+        imagen_url:
+          type: string
+          description: URL de la imagen asociada a la opción
+          example: "https://res.cloudinary.com/example/image/upload/v1234567890/imagenes_opciones/abcdef.jpg"
+        id_pregunta:
+          type: integer
+          description: ID de la pregunta a la que pertenece la opción
+          example: 1
+
+    Estudiante:
+      type: object
+      properties:
+        numero_cuenta:
+          type: string
+          description: Número de cuenta del estudiante
+          example: "20180123"
+        nombre:
+          type: string
+          description: Nombre del estudiante
+          example: "Juan"
+        apellido_paterno:
+          type: string
+          description: Apellido paterno del estudiante
+          example: "Pérez"
+        apellido_materno:
+          type: string
+          description: Apellido materno del estudiante
+          example: "García"
+        email:
+          type: string
+          description: Correo electrónico del estudiante
+          example: "juan.perez@example.com"
+        carrera:
+          type: string
+          description: Carrera que estudia el estudiante
+          example: "Ingeniería en Sistemas"
+        semestre:
+          type: integer
+          description: Semestre que cursa el estudiante
+          example: 5
+        grupo:
+          type: string
+          description: Grupo al que pertenece el estudiante
+          example: "A"
+        ciclo_escolar:
+          type: string
+          description: Ciclo escolar actual
+          example: "2025-1"
+
+    Admin:
+      type: object
+      properties:
+        id_admin:
+          type: integer
+          description: ID único del administrador
+          example: 1
+        nombre:
+          type: string
+          description: Nombre del administrador
+          example: "Admin"
+        apellido_paterno:
+          type: string
+          description: Apellido paterno del administrador
+          example: "Pérez"
+        apellido_materno:
+          type: string
+          description: Apellido materno del administrador
+          example: "García"
+        numero_identificacion:
+          type: string
+          description: Número de identificación del administrador
+          example: "A12345"
+        carrera:
+          type: string
+          description: Carrera que administra
+          example: "Ingeniería en Sistemas"
+
+    Respuesta:
+      type: object
+      properties:
+        id_respuesta:
+          type: integer
+          description: ID único de la respuesta
+          example: 1
+        id_opcion:
+          type: integer
+          description: ID de la opción seleccionada
+          example: 2
+        id_intento:
+          type: integer
+          description: ID del intento de examen
+          example: 3
+        es_correcta:
+          type: boolean
+          description: Indica si la respuesta es correcta
+          example: true
+
+    Intento:
+      type: object
+      properties:
+        id_intento:
+          type: integer
+          description: ID único del intento
+          example: 1
+        numero_cuenta:
+          type: string
+          description: Número de cuenta del estudiante
+          example: "20180123"
+        id_examen:
+          type: integer
+          description: ID del examen
+          example: 2
+        fecha_aplicacion:
+          type: string
+          format: date-time
+          description: Fecha y hora de aplicación del examen
+          example: "2025-01-15T10:30:00Z"
+        calificacion:
+          type: number
+          description: Calificación obtenida en el examen
+          example: 85.5
+
+    ErrorResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Indica si la operación fue exitosa
+          example: false
+        msg:
+          type: string
+          description: Mensaje de error
+          example: "Error en el servidor"
+
+    SuccessResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Indica si la operación fue exitosa
+          example: true
+        msg:
+          type: string
+          description: Mensaje de éxito
+          example: "Operación realizada con éxito"
+
+  parameters:
+    idParam:
+      name: id
+      in: path
+      required: true
+      description: ID del recurso
+      schema:
+        type: string
+
+    ExamenId:
+      name: id
+      in: path
+      required: true
+      description: ID del examen
+      schema:
+        type: integer
+
+    RespuestaId:
+      name: id
+      in: path
+      required: true
+      description: ID de la respuesta
+      schema:
+        type: string
+
+    imagenIdParam:
+      name: id
+      in: path
+      required: true
+      description: ID de la imagen a eliminar
+      schema:
+        type: string
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+# Define all paths
+paths:
+  # Auth paths
+  /admin:
+    post:
+      summary: Crear un nuevo administrador
+      description: Solo un `superAdmin` puede crear administradores
+      tags:
+      - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  description: Nombre del administrador
+                  example: "Juan"
+                apellido_paterno:
+                  type: string
+                  description: Apellido paterno del administrador
+                  example: "Pérez"
+                apellido_materno:
+                  type: string
+                  description: Apellido materno del administrador
+                  example: "Gómez"
+                numero_identificacion:
+                  type: string
+                  description: Número de identificación único
+                  example: "123456789"
+                nip:
+                  type: string
+                  description: NIP del administrador
+                  example: "1234"
+                carrera:
+                  type: string
+                  description: Carrera que administra
+                  example: "Ingeniería"
+      responses:
+        '201':
+          description: Administrador creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Administrador creado exitosamente"
+                  admin:
+                    $ref: '#/components/schemas/Admin'
+        '409':
+          description: El administrador ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "Este usuario ya existe"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /admin/auth:
+    post:
+      summary: Autenticación de administrador
+      description: Iniciar sesión como administrador
+      tags:
+      - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                numero_identificacion:
+                  type: string
+                  description: Número de identificación del administrador
+                  example: "123456789"
+                nip:
+                  type: string
+                  description: NIP del administrador
+                  example: "1234"
+      responses:
+        '200':
+          description: Autenticación exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Usuario autenticado exitosamente"
+                  token:
+                    type: string
+                    example: "jwt-token"
+                  admin:
+                    $ref: '#/components/schemas/Admin'
+        '401':
+          description: Credenciales incorrectas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 401
+                  msg:
+                    type: string
+                    example: "Verifica tus credenciales e intenta de nuevo."
+                  token:
+                    type: null
+                    example: null
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "El usuario no está registrado"
+                  token:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/renew:
+    get:
+      summary: Renovar token de autenticación
+      description: Renovar el token JWT para mantener la sesión activa
+      tags:
+      - Autenticación
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Token renovado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    example: "jwt-token-renovado"
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /admin-password:
+    put:
+      summary: Actualizar contraseña de administrador
+      description: Cambiar la contraseña del administrador autenticado
+      tags:
+      - Autenticación
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                numero_identificacion:
+                  type: string
+                  description: Número de identificación del administrador
+                  example: "123456789"
+                nip_actual:
+                  type: string
+                  description: NIP actual
+                  example: "1234"
+                nip_nuevo:
+                  type: string
+                  description: Nuevo NIP
+                  example: "5678"
+      responses:
+        '200':
+          description: Contraseña actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Contraseña actualizada exitosamente"
+        '401':
+          description: NIP actual incorrecto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 401
+                  msg:
+                    type: string
+                    example: "Verifica tu NIP actual e intenta de nuevo."
+                  token:
+                    type: null
+                    example: null
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "El usuario no está registrado"
+                  token:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Student paths
+  /students:
+    post:
+      summary: Crear un nuevo estudiante
+      description: Registrar un nuevo estudiante en el sistema
+      tags:
+      - Estudiantes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  description: Nombre del estudiante
+                  example: "Pedro"
+                apellido_paterno:
+                  type: string
+                  description: Apellido paterno del estudiante
+                  example: "García"
+                apellido_materno:
+                  type: string
+                  description: Apellido materno del estudiante
+                  example: "López"
+                email:
+                  type: string
+                  description: Correo electrónico del estudiante
+                  example: "pedro.garcia@example.com"
+                numero_cuenta:
+                  type: string
+                  description: Número de cuenta del estudiante
+                  example: "20180123"
+                carrera:
+                  type: string
+                  description: Carrera que estudia el estudiante
+                  example: "Ingeniería"
+                semestre:
+                  type: integer
+                  description: Semestre que cursa el estudiante
+                  example: 5
+                grupo:
+                  type: string
+                  description: Grupo al que pertenece el estudiante
+                  example: "A"
+                ciclo_escolar:
+                  type: string
+                  description: Ciclo escolar actual
+                  example: "2025-1"
+                nip:
+                  type: string
+                  description: NIP del estudiante
+                  example: "1234"
+      responses:
+        '201':
+          description: Estudiante creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Estudiante registrado exitosamente"
+                  token:
+                    type: string
+                    example: "jwt-token"
+                  estudiante:
+                    $ref: '#/components/schemas/Estudiante'
+        '409':
+          description: El estudiante ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "El número de cuenta ya está registrado. Por favor, verifique sus datos."
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /students/{id}:
+    get:
+      summary: Obtener información de un estudiante
+      description: Obtener la información de un estudiante por su ID
+      tags:
+      - Estudiantes
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Número de cuenta del estudiante
+        schema:
+          type: string
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Información del estudiante obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Usuario autenticado exitosamente"
+                  estudiante:
+                    $ref: '#/components/schemas/Estudiante'
+        '404':
+          description: Estudiante no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Este usurio no existe"
+                  estudiante:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Actualizar la información de un estudiante
+      description: Actualizar la información de un estudiante por su ID
+      tags:
+      - Estudiantes
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Número de cuenta del estudiante
+        schema:
+          type: string
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  description: Nombre del estudiante
+                  example: "Pedro"
+                apellido_paterno:
+                  type: string
+                  description: Apellido paterno del estudiante
+                  example: "García"
+                apellido_materno:
+                  type: string
+                  description: Apellido materno del estudiante
+                  example: "López"
+                email:
+                  type: string
+                  description: Correo electrónico del estudiante
+                  example: "pedro.garcia@example.com"
+                carrera:
+                  type: string
+                  description: Carrera que estudia el estudiante
+                  example: "Ingeniería"
+                semestre:
+                  type: integer
+                  description: Semestre que cursa el estudiante
+                  example: 5
+                grupo:
+                  type: string
+                  description: Grupo al que pertenece el estudiante
+                  example: "A"
+                ciclo_escolar:
+                  type: string
+                  description: Ciclo escolar actual
+                  example: "2025-1"
+      responses:
+        '200':
+          description: Información del estudiante actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Usuario autenticado exitosamente"
+        '404':
+          description: Estudiante no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Este usurio no existe"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /students/auth:
+    post:
+      summary: Autenticación de estudiante
+      description: Autenticación de estudiantes para iniciar sesión
+      tags:
+      - Estudiantes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                numero_cuenta:
+                  type: string
+                  description: Número de cuenta del estudiante
+                  example: "20180123"
+                nip:
+                  type: string
+                  description: NIP del estudiante
+                  example: "1234"
+      responses:
+        '200':
+          description: Autenticación exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Usuario autenticado exitosamente"
+                  token:
+                    type: string
+                    example: "jwt-token"
+                  estudiante:
+                    $ref: '#/components/schemas/Estudiante'
+        '401':
+          description: Credenciales incorrectas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 401
+                  msg:
+                    type: string
+                    example: "La contraseña es incorrecta"
+                  token:
+                    type: null
+                    example: null
+        '404':
+          description: Estudiante no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Este usurio no existe"
+                  token:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Exam paths
+  /exams:
+    post:
+      summary: Crear un nuevo examen
+      tags:
+      - Exámenes
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Datos del examen a crear
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                carrera:
+                  type: string
+                  description: Carrera o área del examen
+                  example: "Ingeniería en Sistemas"
+                nombre:
+                  type: string
+                  description: Nombre del examen
+                  example: "Examen de Matemáticas"
+                periodo:
+                  type: string
+                  description: Periodo o ciclo en el que se aplica el examen
+                  example: "2025-1"
+                duracion:
+                  type: string
+                  format: time
+                  description: Duración del examen en formato de hora (hh:mm:ss)
+                  example: "02:00:00"
+      responses:
+        '201':
+          description: Examen creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Examen guardado exitosamente"
+                  examen:
+                    $ref: '#/components/schemas/Examen'
+        '409':
+          description: El examen ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "Ya existe un examen con este título."
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      summary: Obtener todos los exámenes
+      tags:
+      - Exámenes
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Lista de exámenes obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: null
+                  examenes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Examen'
+        '404':
+          description: No hay exámenes disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No hay exámenes disponibles"
+                  examenes:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /exams/{id}:
+    get:
+      summary: Obtener detalles de un examen por ID
+      tags:
+      - Exámenes
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID del examen
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Examen encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: null
+                  examen:
+                    $ref: '#/components/schemas/Examen'
+        '404':
+          description: Examen no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Este examen no existe"
+                  examen:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Editar un examen
+      tags:
+      - Exámenes
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID del examen
+        schema:
+          type: integer
+      requestBody:
+        description: Datos del examen a editar
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Examen'
+      responses:
+        '201':
+          description: Examen actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Examen actualizado exitosamente"
+                  examen:
+                    $ref: '#/components/schemas/Examen'
+        '404':
+          description: Examen no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "El examen no existe o ha sido eliminado"
+        '409':
+          description: El examen ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "Ya existe un examen con este título."
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /exams/state/{id}:
+    put:
+      summary: Cambiar el estado de un examen
+      tags:
+      - Exámenes
+      security:
+      - BearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/ExamenId'
+      requestBody:
+        description: Estado del examen
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                estado:
+                  type: string
+                  enum:
+                  - "activo"
+                  - "inactivo"
+                  - "finalizado"
+                  - "borrador"
+      responses:
+        '201':
+          description: Estado de examen actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Examen actualizado exitosamente"
+                  examen:
+                    $ref: '#/components/schemas/Examen'
+        '404':
+          description: Examen no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Este examen ya no está disponible"
+                  examen:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /exams/career:
+    get:
+      summary: Obtener exámenes por carrera
+      tags:
+      - Exámenes
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Exámenes por carrera obtenidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: null
+                  examenes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Examen'
+        '404':
+          description: No hay exámenes disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No hay exámenes disponibles"
+                  examenes:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Question paths
+  /questions:
+    post:
+      summary: Crear una nueva pregunta
+      tags:
+      - Preguntas
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Datos de la nueva pregunta
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                id_examen:
+                  type: integer
+                  description: ID del examen
+                  example: 1
+                orden:
+                  type: integer
+                  description: Orden de la pregunta
+                  example: 1
+                contenido:
+                  type: string
+                  description: Contenido de la pregunta
+                  example: "¿Cuál es la capital de Francia?"
+                imagen:
+                  type: string
+                  format: binary
+                  description: Imagen de la pregunta (opcional)
+      responses:
+        '201':
+          description: Pregunta creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Pregunta guardada exitosamente"
+                  pregunta:
+                    $ref: '#/components/schemas/Pregunta'
+        '409':
+          description: La pregunta ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "La pregunta ya existe en este examen. Por favor, ingresa una pregunta diferente."
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /questions/id/{id}:
+    get:
+      summary: Obtener pregunta por ID
+      tags:
+      - Preguntas
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la pregunta
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Pregunta encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  pregunta:
+                    $ref: '#/components/schemas/Pregunta'
+        '404':
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No se encontraron preguntas u opciones en este examen"
+                  pregunta:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /questions/{id}:
+    put:
+      summary: Editar pregunta por ID
+      tags:
+      - Preguntas
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la pregunta
+        schema:
+          type: integer
+      requestBody:
+        description: Datos de la pregunta a editar
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                contenido:
+                  type: string
+                  description: Contenido de la pregunta
+                  example: "¿Cuál es la capital de Francia?"
+                imagen:
+                  type: string
+                  format: binary
+                  description: Imagen de la pregunta (opcional)
+      responses:
+        '201':
+          description: Pregunta actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Pregunta guardada exitosamente"
+                  pregunta:
+                    $ref: '#/components/schemas/Pregunta'
+        '409':
+          description: La pregunta ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "La pregunta ya existe en este examen. Por favor, ingresa una pregunta diferente."
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Eliminar pregunta por ID
+      tags:
+      - Preguntas
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la pregunta
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Pregunta eliminada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Pregunta eliminada y orden actualizado exitosamente"
+        '404':
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Esta pregunta no existe"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /questions/imagen/{id}:
+    put:
+      summary: Eliminar imagen de una pregunta
+      tags:
+      - Preguntas
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la pregunta
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Imagen eliminada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Imagen eliminada exitosamente"
+        '404':
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Esta pregunta no existe"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /questions/orden:
+    get:
+      summary: Obtener preguntas por orden
+      tags:
+      - Preguntas
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Preguntas por orden obtenidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  pregunta:
+                    $ref: '#/components/schemas/Pregunta'
+        '404':
+          description: No se encontraron preguntas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No se encontraron preguntas u opciones en este examen"
+                  pregunta:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /questions/exam/{id}:
+    get:
+      summary: Obtener preguntas por ID de examen
+      tags:
+      - Preguntas
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID del examen
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Preguntas de examen obtenidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  preguntas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id_pregunta:
+                          type: integer
+                          example: 1
+                        orden:
+                          type: integer
+                          example: 1
+        '404':
+          description: No se encontraron preguntas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No se encontraron preguntas u opciones en este examen"
+                  preguntas:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /questions/answers/{id_intento}:
+    get:
+      summary: Obtener pregunta y respuesta por ID de intento
+      tags:
+      - Preguntas
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id_intento
+        in: path
+        required: true
+        description: ID del intento de examen
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Pregunta y respuesta obtenidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  pregunta:
+                    $ref: '#/components/schemas/Pregunta'
+        '404':
+          description: No se encontraron preguntas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No se encontraron preguntas u opciones en este examen"
+                  pregunta:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Option paths
+  /options:
+    post:
+      summary: Crear una nueva opción
+      tags:
+      - Opciones
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Datos de la nueva opción a crear
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                id_pregunta:
+                  type: integer
+                  description: ID de la pregunta
+                  example: 1
+                contenido:
+                  type: string
+                  description: Contenido de la opción
+                  example: "París"
+                es_correcta:
+                  type: boolean
+                  description: Indica si la opción es correcta
+                  example: true
+                imagen:
+                  type: string
+                  format: binary
+                  description: Imagen de la opción (opcional)
+      responses:
+        '201':
+          description: Opción creada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Opción guardada exitosamente"
+                  opcion:
+                    $ref: '#/components/schemas/Opcion'
+        '409':
+          description: La opción ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "La opcion ya está guardada en esta pregunta. Por favor, ingresa una opción diferente."
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /options/{id}:
+    get:
+      summary: Obtener una opción por ID
+      tags:
+      - Opciones
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la opción
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Opción obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Opcion eliminada exitosamente"
+                  opcion:
+                    $ref: '#/components/schemas/Opcion'
+        '404':
+          description: Opción no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Esta opcion no existe"
+                  opcion:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Editar una opción por ID
+      tags:
+      - Opciones
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la opción
+        schema:
+          type: integer
+      requestBody:
+        description: Datos de la opción a editar
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                contenido:
+                  type: string
+                  description: Contenido de la opción
+                  example: "París"
+                es_correcta:
+                  type: boolean
+                  description: Indica si la opción es correcta
+                  example: true
+                imagen:
+                  type: string
+                  format: binary
+                  description: Imagen de la opción (opcional)
+      responses:
+        '200':
+          description: Opción editada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Opción actualizada exitosamente."
+                  opcion:
+                    $ref: '#/components/schemas/Opcion'
+        '404':
+          description: Opción no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Opción no encontrada."
+        '409':
+          description: La opción ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "La opción ya está guardada en esta pregunta. Por favor, ingresa una opción diferente."
+                  opcion:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Eliminar una opción por ID
+      tags:
+      - Opciones
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la opción
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Opción eliminada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Opcion eliminada exitosamente"
+        '404':
+          description: Opción no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Esta opcion no existe"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /options/imagen/{id}:
+    put:
+      summary: Eliminar una imagen asociada a una opción
+      tags:
+      - Opciones
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la opción
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Imagen eliminada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Imagen eliminada exitosamente"
+        '404':
+          description: Opción no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Esta opcion no existe"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Answer paths
+  /answers:
+    post:
+      summary: Crear una respuesta
+      tags:
+      - Respuestas
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Datos de la respuesta a crear
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_intento:
+                  type: integer
+                  description: ID del intento de examen
+                  example: 1
+                id_opcion:
+                  type: integer
+                  description: ID de la opción seleccionada
+                  example: 2
+      responses:
+        '201':
+          description: Respuesta creada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Respuesta guardada exitosamente"
+                  respuesta:
+                    $ref: '#/components/schemas/Respuesta'
+        '404':
+          description: Intento u opción no encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "ID del intento no encontrado"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: string
+                    example: "Error en el servidor"
+                  respuesta:
+                    type: null
+                    example: null
+
+  /answers/{id}:
+    get:
+      summary: Obtener una respuesta por ID
+      tags:
+      - Respuestas
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la respuesta
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Respuesta encontrada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: null
+                  respuesta:
+                    $ref: '#/components/schemas/Respuesta'
+        '404':
+          description: Respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No existe una respuesta con ese ID"
+                  respuesta:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: string
+                    example: "Error en el servidor"
+                  respuesta:
+                    type: null
+                    example: null
+
+    put:
+      summary: Actualizar una respuesta por ID
+      tags:
+      - Respuestas
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID de la respuesta
+        schema:
+          type: integer
+      requestBody:
+        description: Datos de la respuesta a actualizar
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_opcion:
+                  type: integer
+                  description: ID de la opción seleccionada
+                  example: 3
+      responses:
+        '201':
+          description: Respuesta actualizada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Respuesta guardada exitosamente"
+                  respuesta:
+                    $ref: '#/components/schemas/Respuesta'
+        '404':
+          description: Respuesta u opción no encontradas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "ID de la respuesta no encontrado"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: string
+                    example: "Error en el servidor"
+                  respuesta:
+                    type: null
+                    example: null
+
+  # Attempt paths
+  /attempt:
+    post:
+      summary: Crear un intento de examen
+      tags:
+      - Intentos
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Datos del intento de examen a crear
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                numero_cuenta:
+                  type: string
+                  description: Número de cuenta del estudiante
+                  example: "20180123"
+                id_examen:
+                  type: integer
+                  description: ID del examen
+                  example: 1
+      responses:
+        '201':
+          description: Intento creado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Intento creado exitosamente"
+                  intento:
+                    $ref: '#/components/schemas/Intento'
+        '404':
+          description: Examen no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No existe un examen con este ID"
+                  intento:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /attempt/{id}:
+    get:
+      summary: Obtener un intento de examen por ID
+      tags:
+      - Intentos
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID del intento
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Intento encontrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: null
+                  intento:
+                    $ref: '#/components/schemas/Intento'
+        '404':
+          description: Intento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No existe un intento con este ID"
+                  intento:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Actualizar un intento de examen por ID
+      tags:
+      - Intentos
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID del intento
+        schema:
+          type: integer
+      requestBody:
+        description: Datos del intento de examen a actualizar
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                calificacion:
+                  type: number
+                  description: Calificación del intento
+                  example: 85.5
+      responses:
+        '201':
+          description: Intento actualizado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: null
+                  intento:
+                    $ref: '#/components/schemas/Intento'
+        '404':
+          description: Intento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No existe un intento con este ID"
+                  intento:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Results paths
+  /results/mis-resultados/{id}:
+    get:
+      summary: Obtener los resultados del estudiante
+      tags:
+      - Resultados
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Número de cuenta del estudiante
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Resultados encontrados con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  resultados:
+                    type: object
+                    properties:
+                      promedioGeneral:
+                        type: object
+                        properties:
+                          promedioGeneral:
+                            type: number
+                            example: 85.5
+                      mejorCalificacion:
+                        type: object
+                        properties:
+                          calificacion:
+                            type: number
+                            example: 95
+                          examen:
+                            type: object
+                            properties:
+                              nombre:
+                                type: string
+                                example: "Examen de Matemáticas"
+                      menorCalificacion:
+                        type: object
+                        properties:
+                          calificacion:
+                            type: number
+                            example: 70
+                          examen:
+                            type: object
+                            properties:
+                              nombre:
+                                type: string
+                                example: "Examen de Física"
+                      totalIntentos:
+                        type: integer
+                        example: 5
+                  historialExamenes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        nombre:
+                          type: string
+                          example: "Examen de Matemáticas"
+                        id_examen:
+                          type: integer
+                          example: 1
+                        area:
+                          type: string
+                          example: "Matemáticas"
+                        fecha_aplicacion:
+                          type: string
+                          format: date-time
+                          example: "2025-01-15T10:30:00Z"
+                        calificacion:
+                          type: number
+                          example: 85.5
+                        id_intento:
+                          type: integer
+                          example: 1
+                        estado:
+                          type: string
+                          example: "Aprobado"
+        '404':
+          description: Resultados no encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No se encontraron registros para este número de cuenta"
+                  resultados:
+                    type: null
+                    example: null
+                  historialExamenes:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: null
+                  resultados:
+                    type: null
+                    example: null
+                  historialExamenes:
+                    type: null
+                    example: null
+
+  /results/calificacion-intento/{id}:
+    get:
+      summary: Obtener la calificación de un intento
+      tags:
+      - Resultados
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID del intento
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Calificación del intento encontrada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  examen:
+                    $ref: '#/components/schemas/Intento'
+                  respuestas:
+                    type: object
+                    properties:
+                      correctas:
+                        type: integer
+                        example: 8
+                      totalPreguntas:
+                        type: integer
+                        example: 10
+                      incorrectas:
+                        type: integer
+                        example: 2
+                      calificacionFinal:
+                        type: string
+                        example: "80.00"
+                      mensaje:
+                        type: string
+                        example: "Buen trabajo, pero puedes mejorar."
+        '404':
+          description: Intento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "El intento de examen que buscas no existe o ha sido eliminado."
+                  examen:
+                    type: null
+                    example: null
+                  respuestas:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: string
+                    example: "Error en el servidor"
+                  examen:
+                    type: null
+                    example: null
+                  respuestas:
+                    type: null
+                    example: null
+
+  /results/revision/{id_intento}:
+    get:
+      summary: Obtener la revisión de un intento
+      tags:
+      - Resultados
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id_intento
+        in: path
+        required: true
+        description: ID del intento
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Revisión encontrada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  intento:
+                    $ref: '#/components/schemas/Intento'
+                  examen:
+                    $ref: '#/components/schemas/Examen'
+                  preguntas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id_pregunta:
+                          type: integer
+                          example: 1
+                        contenido:
+                          type: string
+                          example: "¿Cuál es la capital de Francia?"
+                        imagen_url:
+                          type: string
+                          example: "https://res.cloudinary.com/example/image/upload/v1234567890/imagenes_preguntas/abcdef.jpg"
+                        orden:
+                          type: integer
+                          example: 1
+                        opcion_escogida:
+                          type: string
+                          example: "París"
+                        opcion_escogida_imagen:
+                          type: string
+                          example: "https://res.cloudinary.com/example/image/upload/v1234567890/imagenes_opciones/abcdef.jpg"
+                        opcion_escogida_correcta:
+                          type: boolean
+                          example: true
+                        opcion_correcta:
+                          type: string
+                          example: "París"
+                        opcion_correcta_imagen:
+                          type: string
+                          example: "https://res.cloudinary.com/example/image/upload/v1234567890/imagenes_opciones/abcdef.jpg"
+                  totalPreguntas:
+                    type: integer
+                    example: 10
+                  totalPages:
+                    type: integer
+                    example: 1
+                  currentPage:
+                    type: integer
+                    example: 1
+                  numeroIntento:
+                    type: integer
+                    example: 1
+        '404':
+          description: Revisión no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "El intento de examen que buscas no existe o ha sido eliminado."
+                  examen:
+                    type: null
+                    example: null
+                  respuestas:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: null
+                  examen:
+                    type: null
+                    example: null
+                  respuestas:
+                    type: null
+                    example: null
+
+  /results/preguntas-panel/{id_intento}:
+    get:
+      summary: Obtener las preguntas para el panel de revisión de un intento
+      tags:
+      - Resultados
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id_intento
+        in: path
+        required: true
+        description: ID del intento
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Preguntas para el panel encontradas con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  preguntasPanel:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id_pregunta:
+                          type: integer
+                          example: 1
+                        orden:
+                          type: integer
+                          example: 1
+                        es_correcta:
+                          type: boolean
+                          example: true
+        '404':
+          description: Intento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Intento no encontrado"
+                  preguntasPanel:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: string
+                    example: "Error en el servidor"
+
+  # Dashboard paths
+  /admin-dashboard/porcentaje-aprobados:
+    get:
+      summary: Obtener porcentaje de aprobados
+      tags:
+      - Dashboard
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Porcentaje de aprobados encontrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  porcentajes:
+                    type: object
+                    properties:
+                      aprobados:
+                        type: string
+                        example: "75.50"
+                      reprobados:
+                        type: string
+                        example: "24.50"
+                  datosInicio:
+                    type: object
+                    properties:
+                      totalExamenes:
+                        type: integer
+                        example: 5
+                      estudiantesRegistrados:
+                        type: integer
+                        example: 100
+                      ultimoExamen:
+                        type: object
+                        properties:
+                          fecha_aplicacion:
+                            type: string
+                            format: date-time
+                            example: "2025-01-15T10:30:00Z"
+                          examen:
+                            type: object
+                            properties:
+                              nombre:
+                                type: string
+                                example: "Examen de Matemáticas"
+        '404':
+          description: No hay datos disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  historialAprobados:
+                    type: null
+                    example: null
+                  porcentajeAprobados:
+                    type: null
+                    example: null
+                  datosInicio:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  historialAprobados:
+                    type: null
+                    example: null
+                  porcentajeAprobados:
+                    type: null
+                    example: null
+                  datosInicio:
+                    type: null
+                    example: null
+
+  /admin-dashboard/porcentaje-fechas:
+    get:
+      summary: Obtener porcentaje de fechas
+      tags:
+      - Dashboard
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Porcentaje de fechas encontrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  porcentajesPorFecha:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        fecha:
+                          type: string
+                          format: date
+                          example: "2025-01-15"
+                        nombre:
+                          type: string
+                          example: "Examen de Matemáticas"
+                        porcentajeAprobados:
+                          type: string
+                          example: "75.50"
+                        totalIntentos:
+                          type: integer
+                          example: 50
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  porcentajesPorFecha:
+                    type: null
+                    example: null
+
+  /admin-dashboard/borradores:
+    get:
+      summary: Obtener borradores
+      tags:
+      - Dashboard
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Borradores encontrados con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  borradores:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Examen'
+        '404':
+          description: No hay borradores disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No hay borradores disponibles"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  borradores:
+                    type: null
+                    example: null
+
+  /admin-dashboard/rendimiento-preguntas/{id_examen}:
+    get:
+      summary: Obtener rendimiento por pregunta
+      tags:
+      - Dashboard
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id_examen
+        in: path
+        required: true
+        description: ID del examen
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Rendimiento por pregunta encontrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  intentos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pregunta:
+                          type: integer
+                          example: 1
+                        porcentaje_aciertos:
+                          type: string
+                          example: "0.75"
+                        texto_pregunta:
+                          type: string
+                          example: "¿Cuál es la capital de Francia?"
+                        opciones:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              opcion:
+                                type: integer
+                                example: 1
+                              texto:
+                                type: string
+                                example: "París"
+                              frecuencia:
+                                type: integer
+                                example: 40
+        '404':
+          description: No hay preguntas disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No hay preguntas disponibles"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: string
+                    example: "Error en el servidor"
+                  borradores:
+                    type: null
+                    example: null
+
+  /admin-dashboard/ultimo-examen-aplicado:
+    get:
+      summary: Obtener último examen aplicado
+      tags:
+      - Dashboard
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Último examen aplicado encontrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  examen:
+                    type: object
+                    properties:
+                      fecha_aplicacion:
+                        type: string
+                        format: date-time
+                        example: "2025-01-15T10:30:00Z"
+                      examen:
+                        type: object
+                        properties:
+                          nombre:
+                            type: string
+                            example: "Examen de Matemáticas"
+        '404':
+          description: No hay datos disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No hay datos disponibles sobre exámenes aplicados hasta el momento."
+                  examen:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: string
+                    example: "Error en el servidor"
+                  examen:
+                    type: null
+                    example: null
+
+  /admin-dashboard/calificaciones-resumen/{id_examen}:
+    get:
+      summary: Obtener calificaciones y resumen de un examen
+      tags:
+      - Dashboard
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id_examen
+        in: path
+        required: true
+        description: ID del examen
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Calificaciones y resumen encontrados con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: null
+                  calificaciones:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        numero_cuenta:
+                          type: string
+                          example: "20180123"
+                        nombre:
+                          type: string
+                          example: "Juan"
+                        apellido_paterno:
+                          type: string
+                          example: "Pérez"
+                        apellido_materno:
+                          type: string
+                          example: "García"
+                        calificacion:
+                          type: string
+                          example: "85.50"
+                        total_intentos:
+                          type: integer
+                          example: 2
+                  resumen:
+                    type: object
+                    properties:
+                      promedio_general:
+                        type: string
+                        example: "78.50"
+                      total_estudiantes:
+                        type: integer
+                        example: 50
+                      tasa_aprobacion:
+                        type: string
+                        example: "75.00"
+                      distribucion_calificaciones:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            rango:
+                              type: string
+                              example: "81-100"
+                            cantidad:
+                              type: integer
+                              example: 20
+                      aprobacion:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Aprobados"
+                            value:
+                              type: number
+                              example: 75
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 500
+                  msg:
+                    type: string
+                    example: "Error en el servidor"
+                  calificaciones:
+                    type: array
+                    items: []
+                  resumen:
+                    type: object
+                    properties: {}
+
+  # Admin Management paths
+  /admin-managment:
+    post:
+      summary: Crear un nuevo administrador
+      tags:
+      - Admin Management
+      security:
+      - BearerAuth: []
+      requestBody:
+        description: Datos del administrador a crear
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  example: "Juan"
+                apellido_paterno:
+                  type: string
+                  example: "Pérez"
+                apellido_materno:
+                  type: string
+                  example: "García"
+                numero_identificacion:
+                  type: string
+                  example: "A12345"
+                nip:
+                  type: string
+                  example: "1234"
+                carrera:
+                  type: string
+                  example: "Ingeniería en Sistemas"
+      responses:
+        '201':
+          description: Administrador creado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 201
+                  msg:
+                    type: string
+                    example: "Administrador creado exitosamente"
+                  admin:
+                    $ref: '#/components/schemas/Admin'
+        '409':
+          description: El administrador ya existe
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 409
+                  msg:
+                    type: string
+                    example: "Este usuario ya existe"
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      summary: Obtener todos los administradores
+      tags:
+      - Admin Management
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de administradores obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: ""
+                  administradores:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Admin'
+        '404':
+          description: No hay administradores disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "No hay administradores disponibles."
+                  administradores:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /admin-managment/{id_admin}:
+    put:
+      summary: Actualizar un administrador
+      tags:
+      - Admin Management
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id_admin
+        in: path
+        required: true
+        description: ID del administrador a actualizar
+        schema:
+          type: string
+      requestBody:
+        description: Datos del administrador a actualizar
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  example: "Juan"
+                apellido_paterno:
+                  type: string
+                  example: "Pérez"
+                apellido_materno:
+                  type: string
+                  example: "García"
+                numero_identificacion:
+                  type: string
+                  example: "A12345"
+                carrera:
+                  type: string
+                  example: "Ingeniería en Sistemas"
+      responses:
+        '200':
+          description: Administrador actualizado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Administrador actualizado exitosamente"
+        '404':
+          description: Administrador no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Este administrador no existe"
+                  administradores:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Eliminar un administrador
+      tags:
+      - Admin Management
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id_admin
+        in: path
+        required: true
+        description: ID del administrador a eliminar
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Administrador eliminado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  msg:
+                    type: string
+                    example: "Administrador eliminado exitosamente"
+        '404':
+          description: Administrador no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  status:
+                    type: integer
+                    example: 404
+                  msg:
+                    type: string
+                    example: "Este administrador no existe"
+                  administradores:
+                    type: null
+                    example: null
+        '500':
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
