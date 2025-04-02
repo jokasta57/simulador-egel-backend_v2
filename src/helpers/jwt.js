@@ -10,7 +10,6 @@ export const generarJWT = ( uid, name, apellido_paterno, apellido_materno, role,
             expiresIn: '8h'
         }, (err, token ) => {
             if(err) {
-                console.log(err)
                 reject('No se pudo generar el token')
             }
 

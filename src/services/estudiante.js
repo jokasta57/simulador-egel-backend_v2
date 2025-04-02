@@ -85,7 +85,6 @@ export const loginEstudianteService = async(numero_cuenta, nip) => {
 
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             msg: 'Error en el servidor'
@@ -121,7 +120,6 @@ export const obtenerInfoDelEstudianteService = async(numero_cuenta) => {
 
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             msg: 'Error en el servidor'
@@ -156,7 +154,6 @@ export const actualizarInfoEstudianteService = async(numero_cuenta, updateData) 
 
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             msg: 'Error en el servidor'

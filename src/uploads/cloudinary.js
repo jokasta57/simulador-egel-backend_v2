@@ -17,7 +17,6 @@ export const subirCloudinary = async (recurso, folder) => {
                     },
                     (error, result) => {
                         if (error) {
-                            console.log(error);
                             resolve({
                                 ok: false,
                                 status: 400,
@@ -49,7 +48,6 @@ export const subirCloudinary = async (recurso, folder) => {
         }
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,

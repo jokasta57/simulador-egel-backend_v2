@@ -6,7 +6,7 @@ export const crearEstudiantesValidators =  [  //Middlewares
     check('apellido_paterno', 'El apellido paterno es obligatorio').not().isEmpty(),
     check('email', 'El email es obligatorio y debe ser válido').isEmail(),
     check('numero_cuenta', 'El número de cuenta es obligatorio y debe ser único').not().isEmpty(),
-    check('nip', 'El NIP debe de ser de minimo 6 caracteres').isLength({min: 6}),
+    check('nip', 'El NIP debe de ser de minimo 4 caracteres').isLength({min: 4}),
     check('carrera', 'La carrera es obligatoria').not().isEmpty(),
     check('semestre', 'El semestre es obligatorio y debe ser un número entre 1 y 12').isInt({ min: 1, max: 12 }),
     check('grupo', 'El grupo es obligatorio').not().isEmpty(),

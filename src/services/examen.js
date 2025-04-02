@@ -33,7 +33,6 @@ export const crearExamenService = async({carrera, nombre, periodo, duracion}) =>
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -82,7 +81,6 @@ export const editarExamenService = async(updateInfo, id_examen) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -115,7 +113,6 @@ export const editarEstadoExamenService = async(estado, id_examen) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -148,7 +145,6 @@ export const obtenerExamenService = async(carrera) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -192,7 +188,6 @@ export const obtenerExamenPorIdService = async(id) => {
         
         const examen = await Examen.findByPk(id);
 
-        console.log(id);
         if(!examen) {
             return {
                 ok: false,
@@ -211,7 +206,6 @@ export const obtenerExamenPorIdService = async(id) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,

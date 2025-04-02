@@ -10,7 +10,6 @@ export const optimizarRecurso = async (recurso) => {
 
         return compressedBuffer; // Retorna la imagen optimizada
     } catch (error) {
-        console.log(error);
         throw error("No se pudo optimizar la imagen");
     }
 }

@@ -33,7 +33,6 @@ export const crearAdministradorService = async(nombre, numero_identificacion, ni
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -83,7 +82,6 @@ export const loginService = async( numero_identificacion, nip) => {
 
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             msg: 'Error en el servidor'
@@ -128,7 +126,6 @@ export const actualizarPasswordService = async(numero_identificacion, nip_actual
 
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             msg: 'Error en el servidor'

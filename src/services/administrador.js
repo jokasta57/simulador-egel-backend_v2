@@ -30,7 +30,6 @@ export const crearAdministradorService = async(nombre, numero_identificacion, ni
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -65,7 +64,6 @@ export const obtenerAdministradoresService = async() => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -75,10 +73,7 @@ export const obtenerAdministradoresService = async() => {
 }
 
 export const actualizarAdministradorService = async(id_admin, newData) => {
-    try {
-
-        console.log(newData);
-        
+    try {        
         const administrador = await Admin.findOne({where: {id_admin}});
 
         if(!administrador) { 
@@ -99,7 +94,6 @@ export const actualizarAdministradorService = async(id_admin, newData) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -131,7 +125,6 @@ export const eliminarAdministradorService = async(id_admin) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,

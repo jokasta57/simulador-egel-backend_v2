@@ -12,7 +12,6 @@ export const crearExamen = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -33,7 +32,6 @@ export const editarExamen = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -44,7 +42,6 @@ export const editarExamen = async (req, res) => {
 export const editarEstadoExamen = async (req, res) => {
     const { id } = req.params;
     const { estado } = req.query;
-    console.log(id, estado);
     try {
         //req.body es enviado como data
         const { status, ok, msg, examen } = await editarEstadoExamenService(estado, id);
@@ -56,7 +53,6 @@ export const editarEstadoExamen = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -77,7 +73,6 @@ export const obtenerExamen = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -98,7 +93,6 @@ export const obtenerExamenPorCarrera = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -119,7 +113,6 @@ export const obtenerExamenPorId = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
