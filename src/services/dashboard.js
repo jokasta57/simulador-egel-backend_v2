@@ -73,7 +73,6 @@ export const obtenerPorcentajeAprobadoService = async (carrera) => {
 
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
@@ -141,7 +140,6 @@ export const obtenerPorcentajeFechasService = async (carrera) => {
             porcentajesPorFecha
         };
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
@@ -173,7 +171,6 @@ export const obtenerBorradoresService = async (carrera) => {
             borradores
         };
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
@@ -184,8 +181,6 @@ export const obtenerBorradoresService = async (carrera) => {
 
 export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInicio, fechaFin) => {   
     try {
-        console.log(fechaInicio, fechaFin);
-
         // Construir condición opcional de fechas
         let whereCondition = { id_examen };
         
@@ -288,7 +283,6 @@ export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInici
             intentos: rendimientoPreguntasArray
         };
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
@@ -309,7 +303,6 @@ export const obtenerUltimoExamenAplicadoService = async(carrera) => {
             }],
             order: [["fecha_aplicacion", 'DESC']]
         })
-        console.log(examen);
 
         if (!examen || examen.length === 0) { 
             return {
@@ -329,7 +322,6 @@ export const obtenerUltimoExamenAplicadoService = async(carrera) => {
 
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,
@@ -451,7 +443,6 @@ export const obtenerCalificacionesYResumenService = async (id_examen, fechaInici
             resumen
         };
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,

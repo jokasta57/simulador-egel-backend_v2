@@ -194,7 +194,6 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
         }
 
     } catch (error) {
-        console.log(error);
         return {
             status: 500,
             ok: false,

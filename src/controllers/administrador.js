@@ -19,7 +19,6 @@ export const crearAdministrador = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor"
@@ -41,7 +40,6 @@ export const obtenerAdministradores = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor"
@@ -64,7 +62,6 @@ export const actualizarAdministrador = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor"
@@ -86,7 +83,6 @@ export const eliminarAdministrador = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor"

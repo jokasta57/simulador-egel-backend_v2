@@ -67,7 +67,6 @@ export const obtenerRevisionPorIntento = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         return res.status(500).json({
             ok: false,
             msg: 'Error en el servidor'
@@ -90,7 +89,6 @@ export const obtenerPreguntasParaPanel = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         return res.status(500).json({
             ok: false,
             msg: 'Error en el servidor'

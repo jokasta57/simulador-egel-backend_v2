@@ -16,7 +16,6 @@ export const crearPregunta = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -38,7 +37,6 @@ export const obtenerPreguntaPorId = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -60,7 +58,6 @@ export const obtenerPreguntaPorOrden = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -81,7 +78,6 @@ export const obtenerPreguntaPorExamen = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -95,8 +91,6 @@ export const obtenerPreguntaYRespuesta = async (req, res) => {
         //req.body es enviado como data
         const { id_examen, orden } = req.query;
 
-        console.log(id_examen, orden);
-
         const { status, ok, msg, pregunta } = await obtenerPreguntaYRespuestaService(id_examen, orden, id_intento);
 
         res.status(status).json({
@@ -106,7 +100,6 @@ export const obtenerPreguntaYRespuesta = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -132,7 +125,6 @@ export const editarPregunta = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -155,7 +147,6 @@ export const eliminarImagenPregunta = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",
@@ -178,7 +169,6 @@ export const eliminarPregunta = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor",

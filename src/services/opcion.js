@@ -6,7 +6,6 @@ export const crearOpcionService = async (id_pregunta, contenido, es_correcta, im
     try {
         //Verificar que no haya preguntas duplicadas
         const opcionDisponible = await Opcion.findOne({ where: { contenido, id_pregunta } });
-        console.log(opcionDisponible);
         if (opcionDisponible) {
             return {
                 ok: false,
@@ -76,7 +75,6 @@ export const crearOpcionService = async (id_pregunta, contenido, es_correcta, im
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -141,7 +139,6 @@ export const obtenerOpcionService = async (id_opcion) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -185,7 +182,6 @@ export const eliminarImagenOpcionService = async (id_opcion) => {
         };
 
     } catch (error) {
-        console.log(error);
         return {
             ok: false,
             status: 500,
@@ -196,14 +192,6 @@ export const eliminarImagenOpcionService = async (id_opcion) => {
 
 export const editarOpcionService = async (id_opcion, contenido, es_correcta, imagen) => {
     try {
-        // Verificar conexión antes de consultar la base de datos
-        // if (!global.navigator?.onLine) {
-        //     return {
-        //         ok: false,
-        //         status: 503,
-        //         msg: "No hay conexión a Internet. Verifica tu red e inténtalo nuevamente."
-        //     };
-        // }
         // Verificamos que la opción exista
         const opcion = await Opcion.findByPk(id_opcion);
         if (!opcion) {

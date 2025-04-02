@@ -20,7 +20,6 @@ export const crearAdministrador = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor"
@@ -43,7 +42,6 @@ export const loginUsuario = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor"
@@ -64,7 +62,6 @@ export const actualizarPassword = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: "Error en el servidor"
@@ -81,7 +78,6 @@ export const revalidarToken = async (req, res) => {
         const apellido_materno = req.apellido_materno;
         const role = req.role;
         const numero_identificacion = req.numero_identificacion;
-        // console.log(req);
 
         //Generar un nuevo JWT y retornarlo en esta peticion
         const token = await generarJWT(id, nombre, apellido_paterno,apellido_materno,  role, numero_identificacion);
@@ -103,7 +99,6 @@ export const revalidarToken = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             ok: false,
             msg: 'Error en el servidor'

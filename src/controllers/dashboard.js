@@ -14,7 +14,6 @@ export const obtenerPorcentajeAprobados = async(req, res) => {
             datosInicio
         })
     } catch (error) {
-        console.log(error);
         res.status(500),json({
             ok: false,
             msg: 'Error en el servidor'
@@ -33,7 +32,6 @@ export const obtenerPorcentajeFechas = async(req, res) => {
             porcentajesPorFecha 
         })
     } catch (error) {
-        console.log(error);
         res.status(500),json({
             ok: false,
             msg: 'Error en el servidor'
@@ -52,7 +50,6 @@ export const obtenerBorradores = async(req, res) => {
             borradores 
         })
     } catch (error) {
-        console.log(error);
         res.status(500),json({
             ok: false,
             msg: 'Error en el servidor'
@@ -72,7 +69,6 @@ export const obtenerRendimientoPorPregunta = async(req, res) => {
             intentos 
         })
     } catch (error) {
-        console.log(error);
         res.status(500),json({
             ok: false,
             msg: 'Error en el servidor'
@@ -91,7 +87,6 @@ export const obtenerUltimoExamenAplicado = async(req, res) => {
             examen 
         })
     } catch (error) {
-        console.log(error);
         res.status(500),json({
             ok: false,
             msg: 'Error en el servidor'
@@ -112,7 +107,6 @@ export const obtenerCalificacionesYResumen = async(req, res) => {
             resumen
         })
     } catch (error) {
-        console.log(error);
         res.status(500),json({
             ok: false,
             msg: 'Error en el servidor'
