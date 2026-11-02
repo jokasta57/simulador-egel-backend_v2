@@ -1,4 +1,5 @@
-import { Op } from "sequelize";
+import pkg from "sequelize";
+const { Op } = pkg;
 import { Opcion } from "../models/asociaciones.js";
 import { eliminarCloudinary, subirCloudinary } from "../uploads/cloudinary.js";
 
@@ -75,10 +76,12 @@ export const crearOpcionService = async (id_pregunta, contenido, es_correcta, im
         };
 
     } catch (error) {
+        conso|le.log(error);
         return {
             ok: false,
             status: 500,
-            msg: 'Error en el servidor'
+            msg: 'Error en el servidor!!!!'
+            
         };
     }
 }
@@ -126,7 +129,7 @@ export const obtenerOpcionService = async (id_opcion) => {
             return {
                 ok: false,
                 status: 404,
-                msg: 'Esta opcion no existe',
+                msg: 'Esta opción no existe',
                 opcion: null
             }
         }
@@ -134,7 +137,7 @@ export const obtenerOpcionService = async (id_opcion) => {
         return {
             ok: true,
             status: 201,
-            msg: "Opcion eliminada exitosamente",
+            msg: "Opción eliminada exitosamente",
             opcion
         };
 
@@ -156,7 +159,7 @@ export const eliminarImagenOpcionService = async (id_opcion) => {
             return {
                 ok: false,
                 status: 404,
-                msg: 'Esta opcion no existe'
+                msg: 'Esta opción no existe'
             }
         }
 

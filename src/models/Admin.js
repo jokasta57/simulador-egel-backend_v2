@@ -1,13 +1,20 @@
-import { DataTypes } from "sequelize";
+import pkg from "sequelize";
+const { DataTypes, Model } = pkg;
 import conexion from "../database/database.js";
 import bcrypt from 'bcrypt';
 
-const Admin = conexion.define('admin', {
+class Admin extends Model {
+    verificarNip(nip) {
+        return bcrypt.compareSync(nip, this.nip);
+    }
+}
+
+Admin.init({
     id_admin: {
-        type: DataTypes.INTEGER, 
+        type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
-        autoIncrement: true, // Añadido para autoincremento
+        autoIncrement: true,
     },
     nombre: {
         type: DataTypes.STRING,
@@ -33,29 +40,28 @@ const Admin = conexion.define('admin', {
         type: DataTypes.TEXT,
         allowNull: false
     },
-    superAdmin: {
-        type: DataTypes.BOOLEAN,
+    superadmin: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: false
+        defaultValue: 0
     }
 }, {
+    sequelize: conexion,
+    modelName: 'admin',
+    timestamps: false,
+    freezeTableName: true,
     hooks: {
-        beforeCreate: async function(administrador){
-            const salt = await bcrypt.genSalt(10)
+        beforeCreate: async function(administrador) {
+            const salt = await bcrypt.genSalt(10);
             administrador.nip = await bcrypt.hash(administrador.nip, salt);
         },
-        beforeUpdate: async function(administrador){
-            if (administrador.changed("nip")) { // Solo rehashea si cambió el NIP
+        beforeUpdate: async function(administrador) {
+            if (administrador.changed("nip")) {
                 const salt = await bcrypt.genSalt(10);
                 administrador.nip = await bcrypt.hash(administrador.nip, salt);
             }
         }
     }
-})
-
-//Metodos personalizados
-Admin.prototype.verificarNip  = function(nip){
-    return bcrypt.compareSync(nip, this.nip); //nip es la constante que envio el usuario y this.nip es desde la base de datos a comparar
-}
+});
 
 export default Admin;

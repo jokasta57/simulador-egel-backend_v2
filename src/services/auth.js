@@ -1,6 +1,7 @@
 import { generarJWT } from "../helpers/jwt.js";
 import Admin from "../models/Admin.js";
-import { Sequelize } from 'sequelize';
+import pkg from 'sequelize';
+const { Sequelize } = pkg;
 import bcrypt from 'bcrypt';
 
 
@@ -43,6 +44,7 @@ export const crearAdministradorService = async(nombre, numero_identificacion, ni
 
 export const loginService = async( numero_identificacion, nip) => {
     try {
+        
         //Verificar que el usuario exista
         const admin = await Admin.findOne({ where: { numero_identificacion } });
         if(!admin){
@@ -65,7 +67,7 @@ export const loginService = async( numero_identificacion, nip) => {
         }
 
         
-        let role =  admin?.superAdmin ? 'superAdmin' : 'admin' 
+        let role = admin?.superadmin ? 'superadmin' : 'admin'
         
         admin.role = role;
 
@@ -82,9 +84,12 @@ export const loginService = async( numero_identificacion, nip) => {
 
 
     } catch (error) {
+        console.error('[loginService]', error);
         return {
+            ok: false,
             status: 500,
-            msg: 'Error en el servidor'
+            msg: 'Error en el servidor',
+            token: null
         }
     }
 }

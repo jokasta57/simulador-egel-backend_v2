@@ -1,4 +1,5 @@
-import { DataTypes } from "sequelize";
+import pkg from "sequelize";
+const { DataTypes } = pkg;
 import conexion from "../database/database.js";
 
 const Intento_examen = conexion.define('intento_examen', {

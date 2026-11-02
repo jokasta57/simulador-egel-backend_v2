@@ -1,4 +1,5 @@
-import { Op, Sequelize } from "sequelize"
+import pkg from "sequelize";
+const { Op, Sequelize } = pkg;
 import { Estudiante, Examen, Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociaciones.js"
 
 export const obtenerPorcentajeAprobadoService = async (carrera) => {

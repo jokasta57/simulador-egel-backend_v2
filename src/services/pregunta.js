@@ -1,4 +1,5 @@
-import { Op, Sequelize } from "sequelize";
+import pkg from "sequelize";
+const { Op, Sequelize } = pkg;
 import { Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociaciones.js";
 import { eliminarCloudinary, subirCloudinary } from "../uploads/cloudinary.js";
 import conexion from "../database/database.js";
@@ -119,7 +120,7 @@ export const obtenerPreguntaPorOrdenService = async (orden, id_examen) => {
                 as: 'opcion',
                 required: false,
                 where: {
-                    id_pregunta: Sequelize.col('Pregunta.id_pregunta') // Aquí usas el id de la pregunta en el include
+                    id_pregunta: Sequelize.col('pregunta.id_pregunta') // Aquí usas el id de la pregunta en el include
                 }
             }
         });
@@ -139,6 +140,7 @@ export const obtenerPreguntaPorOrdenService = async (orden, id_examen) => {
         }
 
     } catch (error) {
+        console.error(error);
         return {
             ok: false,
             status: 500,
@@ -193,7 +195,7 @@ export const obtenerPreguntaYRespuestaService = async (id_examen, orden, id_inte
                 as: 'opcion',
                 required: false,
                 where: {
-                    id_pregunta: Sequelize.col('Pregunta.id_pregunta') // Aquí usas el id de la pregunta en el include
+                    id_pregunta: Sequelize.col('pregunta.id_pregunta') // Aquí usas el id de la pregunta en el include
                 },
                 include: [{
                     model: Respuesta,

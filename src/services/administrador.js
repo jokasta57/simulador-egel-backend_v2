@@ -43,7 +43,7 @@ export const obtenerAdministradoresService = async() => {
         const administradores = await Admin.findAll({
             attributes: ['id_admin', 'nombre', 'apellido_paterno', 'apellido_materno', 'numero_identificacion', 'carrera'],
             where: {
-                superAdmin: 0 || false
+                superadmin: 0
             }
         });
 

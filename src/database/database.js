@@ -1,21 +1,20 @@
-import Sequelize from "sequelize";
-import {config} from 'dotenv';
-// Ejecuta la función config() para cargar las variables de entorno desde el archivo .env
-config();
+import pkg from "sequelize";
+const { Sequelize } = pkg;
+import 'dotenv/config';
 
 const conexion = new Sequelize(process.env.BD_DATABASE, process.env.BD_USER, process.env.BD_PASSWORD, {
     host: process.env.BD_HOST,
     port: process.env.BD_DB_PORT,
-    dialect: 'mysql',
+    dialect: 'postgres',
     define:{
         timestamps: false, //Agrega createdAt y updatedAt
         freezeTableName: true //Desactiva el pluralizado
     },
     pool: {
-        max: 500, //Maximo de conexxiones
-        min: 50, //Minimo de conexxiones
-        acquire: 30000, //Tiempo antes de marxar un aerror 30 seconds
-        idle: 10000  //Finaliza la conexion despues de 10 seconds
+        max: 5,   // Máximo de conexiones por función serverless
+        min: 0,   // Mínimo 0 para que cierre conexiones inactivas
+        acquire: 30000,
+        idle: 10000
     },
     operatorAliases: false
 });

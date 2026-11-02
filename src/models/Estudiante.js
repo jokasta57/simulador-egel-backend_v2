@@ -1,10 +1,17 @@
-import { DataTypes } from "sequelize";
+import pkg from "sequelize";
+const { DataTypes, Model } = pkg;
 import conexion from "../database/database.js";
 import bcrypt from 'bcrypt';
 
-const Estudiante = conexion.define('estudiante', {
+class Estudiante extends Model {
+    verificarNip(nip) {
+        return bcrypt.compareSync(nip, this.nip);
+    }
+}
+
+Estudiante.init({
     numero_cuenta: {
-        type: DataTypes.STRING, // Número de cuenta como clave primaria
+        type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false
     },
@@ -18,13 +25,13 @@ const Estudiante = conexion.define('estudiante', {
     },
     apellido_materno: {
         type: DataTypes.STRING,
-        allowNull: true // Puede ser opcional
+        allowNull: true
     },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            isEmail: true // Validación de email
+            isEmail: true
         }
     },
     carrera: {
@@ -35,8 +42,8 @@ const Estudiante = conexion.define('estudiante', {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-            min: 1, // Semestre mínimo
-            max: 12 // Asume que el máximo es 10
+            min: 1,
+            max: 12
         }
     },
     grupo: {
@@ -52,16 +59,16 @@ const Estudiante = conexion.define('estudiante', {
         allowNull: false
     }
 }, {
+    sequelize: conexion,
+    modelName: 'estudiante',
+    timestamps: false,
+    freezeTableName: true,
     hooks: {
-        beforeCreate: async function(estudiante){
-            const salt = await bcrypt.genSalt(10)
+        beforeCreate: async function(estudiante) {
+            const salt = await bcrypt.genSalt(10);
             estudiante.nip = await bcrypt.hash(estudiante.nip, salt);
         }
     }
-})
-//Metodos personalizados
-Estudiante.prototype.verificarNip  = function(nip){
-    return bcrypt.compareSync(nip, this.nip); //nip es la constante que envio el usuario y this.nip es desde la base de datos a comparar
-}
+});
 
 export default Estudiante;

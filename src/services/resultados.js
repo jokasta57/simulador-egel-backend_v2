@@ -1,4 +1,5 @@
-import { col, fn, literal } from "sequelize";
+import pkg from "sequelize";
+const { col, fn, literal } = pkg;
 import { Estudiante, Examen, Intento_examen, Opcion, Pregunta, Respuesta } from "../models/asociaciones.js"
 
 export const obtenerResultadosService = async (numero_cuenta) => {
@@ -18,22 +19,21 @@ export const obtenerResultadosService = async (numero_cuenta) => {
 
         historialExamenes = await Intento_examen.findAll({
             attributes: [
-                [col("Examen.nombre"), "nombre"],
-                [col("Examen.id_examen"), "id_examen"],
-                [col("Examen.area"), "area"],
-                [col("Intento_examen.fecha_aplicacion"), "fecha_aplicacion"],
-                [col("Intento_examen.calificacion"), "calificacion"],
-                [col("Intento_examen.id_intento"), "id_intento"],
+                [col("examen.nombre"), "nombre"],
+                [col("examen.id_examen"), "id_examen"],
+                [col("examen.area"), "area"],
+                [col("intento_examen.fecha_aplicacion"), "fecha_aplicacion"],
+                [col("intento_examen.calificacion"), "calificacion"],
+                [col("intento_examen.id_intento"), "id_intento"],
                 [
                     literal(`CASE 
-                        WHEN Intento_examen.calificacion >= 70 THEN 'Aprobado' 
+                        WHEN "intento_examen"."calificacion" >= 70 THEN 'Aprobado' 
                         ELSE 'Reprobado' 
                     END`),
                     "estado"
                 ]
             ],
             include: [{ model: Examen, attributes: [] }],
-            // where: { numero_cuenta },
             where: { numero_cuenta },
             order: [["id_examen", "ASC"], ["fecha_aplicacion", "ASC"], ["id_intento", "ASC"]]
         });
@@ -118,6 +118,7 @@ export const obtenerResultadosService = async (numero_cuenta) => {
         }
 
     } catch (error) {
+        console.error('[obtenerResultadosService]', error);
         return {
             status: 500,
             ok: false,

@@ -1,4 +1,5 @@
-import { Op } from "sequelize";
+import pkg from "sequelize";
+const { Op } = pkg;
 import Examen from "../models/Examen.js";
 
 
