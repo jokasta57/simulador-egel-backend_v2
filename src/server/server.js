@@ -39,7 +39,13 @@ class Server {
 
     middlewares() {
         // CORS
-        this.app.use(cors());
+        const corsOptions = {
+            origin: process.env.FRONTEND_URL || '*',
+            methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+            allowedHeaders: ['Content-Type', 'x-token', 'Authorization'],
+            credentials: true
+        };
+        this.app.use(cors(corsOptions));
 
         // Lectura y parseo del body
         this.app.use(express.json());
