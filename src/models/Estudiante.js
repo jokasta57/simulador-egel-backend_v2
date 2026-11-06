@@ -1,7 +1,7 @@
 import pkg from "sequelize";
 const { DataTypes, Model } = pkg;
 import conexion from "../database/database.js";
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 class Estudiante extends Model {
     verificarNip(nip) {

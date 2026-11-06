@@ -2,7 +2,7 @@ import { generarJWT } from "../helpers/jwt.js";
 import Admin from "../models/Admin.js";
 import pkg from 'sequelize';
 const { Sequelize } = pkg;
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 
 export const crearAdministradorService = async(nombre, numero_identificacion, nip, apellido_paterno, apellido_materno) => {
