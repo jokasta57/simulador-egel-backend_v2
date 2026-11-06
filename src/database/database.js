@@ -7,7 +7,13 @@ const conexion = new Sequelize(process.env.BD_DATABASE, process.env.BD_USER, pro
     host: process.env.BD_HOST,
     port: process.env.BD_DB_PORT,
     dialect: 'postgres',
-    dialectModule: pg, // Pasar pg explícitamente a Sequelize
+    dialectModule: pg, // Importación explícita requerida para Vercel
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false // Necesario para Supabase pooler
+        }
+    },
     define:{
         timestamps: false, //Agrega createdAt y updatedAt
         freezeTableName: true //Desactiva el pluralizado
