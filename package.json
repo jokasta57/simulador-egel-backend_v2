@@ -10,10 +10,10 @@
   "author": "Jahir Alberto Samperio",
   "license": "ISC",
   "devDependencies": {
-    "dotenv": "^16.4.7",
     "nodemon": "^3.1.9"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "bcrypt": "^6.0.0",
     "body-parser": "^1.20.3",
     "cloudinary": "^2.5.1",
