@@ -125,10 +125,7 @@ export const obtenerPreguntaPorOrdenService = async (orden, id_examen) => {
             include: {
                 model: Opcion,
                 as: 'opcion',
-                required: false,
-                where: {
-                    id_pregunta: Sequelize.col('pregunta.id_pregunta') // Aquí usas el id de la pregunta en el include
-                }
+                required: false
             }
         });
         if (!pregunta) {
@@ -201,9 +198,6 @@ export const obtenerPreguntaYRespuestaService = async (id_examen, orden, id_inte
                 model: Opcion,
                 as: 'opcion',
                 required: false,
-                where: {
-                    id_pregunta: Sequelize.col('pregunta.id_pregunta') // Aquí usas el id de la pregunta en el include
-                },
                 include: [{
                     model: Respuesta,
                     required: false,
