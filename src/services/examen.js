@@ -3,7 +3,7 @@ const { Op } = pkg;
 import Examen from "../models/Examen.js";
 
 
-export const crearExamenService = async({carrera, nombre, periodo, duracion}) => {
+export const crearExamenService = async({carrera, nombre, periodo, duracion, area}) => {
     try {
         await new Promise(res => setTimeout(res, 2000));
         const fecha = new Date();
@@ -16,7 +16,7 @@ export const crearExamenService = async({carrera, nombre, periodo, duracion}) =>
                 msg: "Ya existe un examen con este título."
             }
         }
-        //Crear nuevo estudiante
+        //Crear nuevo examen
         const examen = await Examen.create({
             carrera, 
             nombre, 
@@ -24,6 +24,7 @@ export const crearExamenService = async({carrera, nombre, periodo, duracion}) =>
             duracion, 
             fecha_modificacion: fecha,
             estado: 'borrador',
+            area
         })
 
         return {
