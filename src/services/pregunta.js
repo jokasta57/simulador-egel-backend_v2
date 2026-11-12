@@ -6,8 +6,12 @@ import conexion from "../database/database.js";
 
 export const crearPreguntaService = async (id_examen, orden, contenido, imagen) => {
     try {
+        // Convertir a enteros ya que vienen como strings desde query params
+        const id_examen_int = parseInt(id_examen);
+        const orden_int = parseInt(orden);
+
         //Verificar que no haya preguntas duplicadas
-        const preguntaDisponible = await Pregunta.findOne({ where: { contenido, id_examen } });
+        const preguntaDisponible = await Pregunta.findOne({ where: { contenido, id_examen: id_examen_int } });
         if (preguntaDisponible) {
             return {
                 ok: false,
@@ -16,7 +20,7 @@ export const crearPreguntaService = async (id_examen, orden, contenido, imagen) 
             }
         }
         //verificar que no se repita el orden
-        const ordenDisponible = await Pregunta.findOne({ where: { orden, id_examen } });
+        const ordenDisponible = await Pregunta.findOne({ where: { orden: orden_int, id_examen: id_examen_int } });
         if (ordenDisponible) {
             return {
                 ok: false,
@@ -26,10 +30,10 @@ export const crearPreguntaService = async (id_examen, orden, contenido, imagen) 
         }
         //Crear nueva pregunta
         let pregunta = await Pregunta.create({
-            id_examen,
+            id_examen: id_examen_int,
             contenido,
             imagen_url: null,
-            orden
+            orden: orden_int
         })
 
         if (imagen) {
@@ -38,7 +42,7 @@ export const crearPreguntaService = async (id_examen, orden, contenido, imagen) 
             //Subir imagen a cloudinary
             const { url_recurso, public_id } = await subirCloudinary(imagen, folder);
             //Si no hay url
-            if (!url_recurso) return { ...result }
+            if (!url_recurso) return { ok: false, status: 500, msg: 'Error al subir imagen' }
 
             //Agregamos el url al objeto
             await Pregunta.update({
@@ -60,6 +64,7 @@ export const crearPreguntaService = async (id_examen, orden, contenido, imagen) 
         };
 
     } catch (error) {
+        console.error('[crearPreguntaService]', error);
         return {
             ok: false,
             status: 500,
@@ -109,11 +114,13 @@ export const obtenerPreguntaPorIdService = async (id_pregunta) => {
 
 export const obtenerPreguntaPorOrdenService = async (orden, id_examen) => {
     try {
+        const orden_int = parseInt(orden);
+        const id_examen_int = parseInt(id_examen);
         //Buscamos la pregunta con ese id
         const pregunta = await Pregunta.findOne({
             where: {
-                orden,
-                id_examen
+                orden: orden_int,
+                id_examen: id_examen_int
             },
             include: {
                 model: Opcion,

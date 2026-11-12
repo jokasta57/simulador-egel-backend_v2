@@ -90,15 +90,15 @@ export const obtenerPorcentajeFechasService = async (carrera) => {
             attributes: [
                 "fecha_aplicacion",
                 [Sequelize.fn("COUNT", Sequelize.col("id_intento")), "total_intentos"],
-                [Sequelize.fn("SUM", Sequelize.literal("CASE WHEN calificacion >= 70 THEN 1 ELSE 0 END")), "total_aprobados"],
-                [Sequelize.col('Examen.nombre'), 'nombre']
+                [Sequelize.fn("SUM", Sequelize.literal(`CASE WHEN "intento_examen"."calificacion" >= 70 THEN 1 ELSE 0 END`)), "total_aprobados"],
+                [Sequelize.col('examen.nombre'), 'nombre']
             ],
             include: [{
                 model: Examen,
                 attributes: [],
                 where: { carrera }
             }],
-            group: ["fecha_aplicacion", 'Examen.nombre'],
+            group: ["fecha_aplicacion", 'examen.nombre', 'examen.id_examen'],
             order: [["fecha_aplicacion", "ASC"]]
         });
 
