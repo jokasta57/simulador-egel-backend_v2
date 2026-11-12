@@ -12,7 +12,7 @@ router.use( validarJWT );
 // router.get('/', validarRol(['admin', 'estudiante']), obtenerPregunta);
 
 //Logueado como admin
-router.use(validarRol(['admin', 'superAdmin']));
+router.use(validarRol(['admin', 'superadmin']));
 
 router.post('/', errorHandlingImages, crearOpcionValidators, crearOpcion);
 

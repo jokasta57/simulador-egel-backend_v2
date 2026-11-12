@@ -8,13 +8,13 @@ const router = Router();
 //El usuario debe estar logueado para poder hacer peticiones
 router.use( validarJWT );
 
-router.post('/', validarRol(['superAdmin']), crearAdminValidators, crearAdministrador);
+router.post('/', validarRol(['superadmin']), crearAdminValidators, crearAdministrador);
 
-router.get('/', validarRol(['superAdmin']), obtenerAdministradores);
+router.get('/', validarRol(['superadmin']), obtenerAdministradores);
 
-router.put('/:id_admin', validarRol(['superAdmin']), actualizarAdministrador);
+router.put('/:id_admin', validarRol(['superadmin']), actualizarAdministrador);
 
-router.delete('/:id_admin', validarRol(['superAdmin']), eliminarAdministrador);
+router.delete('/:id_admin', validarRol(['superadmin']), eliminarAdministrador);
 
 
 export default router;  

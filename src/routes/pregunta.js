@@ -9,16 +9,16 @@ const router = Router();
 //El usuario debe estar logueado para poder hacer peticiones
 router.use( validarJWT );
 
-router.get('/id/:id', validarRol(['admin', 'student', 'superAdmin']), obtenerPreguntaPorId);
+router.get('/id/:id', validarRol(['admin', 'student', 'superadmin']), obtenerPreguntaPorId);
 
-router.get('/orden', validarRol(['admin', 'student', 'superAdmin']), obtenerPreguntaPorOrden);
+router.get('/orden', validarRol(['admin', 'student', 'superadmin']), obtenerPreguntaPorOrden);
 
-router.get('/exam/:id', validarRol(['admin', 'student', 'superAdmin']), obtenerPreguntaPorExamen);
+router.get('/exam/:id', validarRol(['admin', 'student', 'superadmin']), obtenerPreguntaPorExamen);
 
-router.get('/answers/:id_intento', validarRol(['admin', 'student', 'superAdmin']), obtenerPreguntaYRespuesta);
+router.get('/answers/:id_intento', validarRol(['admin', 'student', 'superadmin']), obtenerPreguntaYRespuesta);
 
 //Logueado como admin
-router.use(validarRol(['admin', 'superAdmin']));
+router.use(validarRol(['admin', 'superadmin']));
 
 router.post('/', errorHandlingImages, crearPreguntaValidators, crearPregunta);
 
