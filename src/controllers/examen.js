@@ -61,10 +61,10 @@ export const editarEstadoExamen = async (req, res) => {
 }
 
 export const obtenerExamen = async (req, res) => {
-    const {carrera} = req.query;
+    const { carrera } = req.query;
+    const role = req.role;
     try {
-        //req.body es enviado como data
-        const { status, ok, msg, examenes } = await obtenerExamenService(carrera);
+        const { status, ok, msg, examenes } = await obtenerExamenService(carrera, role);
 
         res.status(status).json({
             ok,

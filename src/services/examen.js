@@ -124,10 +124,12 @@ export const editarEstadoExamenService = async(estado, id_examen) => {
     }
 }
 
-export const obtenerExamenService = async(carrera) => {
+export const obtenerExamenService = async(carrera, role) => {
     try {
-        const examenes = await Examen.findAll({where: {carrera}});
+        // superadmin ve todos los examenes, admin solo los de su carrera
+        const where = role === 'superadmin' ? {} : { carrera };
 
+        const examenes = await Examen.findAll({ where });
 
         if(!examenes || examenes.length === 0) {
             return {
@@ -137,7 +139,6 @@ export const obtenerExamenService = async(carrera) => {
                 examenes: null
             }
         }
-
 
         return {
             ok: true, 
