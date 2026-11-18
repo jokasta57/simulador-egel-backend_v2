@@ -155,7 +155,7 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
         respuestas.correctas = await Respuesta.count({
             where: {
                 id_intento,
-                es_correcta: 1
+                es_correcta: true
             }
         })
         //obtiene el numero de respuestas incorrectas
@@ -166,11 +166,13 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
 
         respuestas.incorrectas = totalPreguntas.length - respuestas.correctas;
 
-        respuestas.calificacionFinal = (respuestas.correctas / (totalPreguntas.length / 100)).toFixed(2);
+        respuestas.calificacionFinal = totalPreguntas.length > 0
+            ? ((respuestas.correctas * 100) / totalPreguntas.length).toFixed(2)
+            : "0.00";
 
+        // La columna calificacion es INTEGER en PostgreSQL: no acepta decimales como "85.71"
         await Intento_examen.update({
-            calificacion:
-                respuestas.calificacionFinal
+            calificacion: Math.round(Number(respuestas.calificacionFinal))
         }, {
             where: {
                 id_intento
@@ -195,6 +197,7 @@ export const obtenerCalificacionPorIntentoService = async (id_intento) => {
         }
 
     } catch (error) {
+        console.error('[obtenerCalificacionPorIntentoService]', error);
         return {
             status: 500,
             ok: false,
