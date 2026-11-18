@@ -218,6 +218,21 @@ export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInici
         // Objeto para almacenar los aciertos por pregunta
         let rendimientoPreguntas = {};
 
+        // Número de cada opción según su posición real dentro de la pregunta (1, 2, 3...),
+        // ordenadas por id_opcion. Antes se numeraban por orden de aparición en las respuestas,
+        // por lo que la opción más elegida casi siempre salía como "1".
+        const preguntasExamen = await Pregunta.findAll({
+            where: { id_examen },
+            attributes: ['id_pregunta'],
+            include: [{ model: Opcion, as: 'opcion', attributes: ['id_opcion'] }]
+        });
+        const posicionOpcion = {};
+        preguntasExamen.forEach(p => {
+            [...(p.opcion || [])]
+                .sort((a, b) => a.id_opcion - b.id_opcion)
+                .forEach((op, i) => { posicionOpcion[op.id_opcion] = i + 1; });
+        });
+
         // Procesar datos
         intentos.forEach(intento => {
             let respuestas = intento.respuesta || [];
@@ -241,7 +256,7 @@ export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInici
                 // Registrar opción si no existe
                 if (!rendimientoPreguntas[id_pregunta].opciones[id_opcion]) {
                     rendimientoPreguntas[id_pregunta].opciones[id_opcion] = {
-                        opcion: Object.keys(rendimientoPreguntas[id_pregunta].opciones).length + 1, // A, B, C, D...
+                        opcion: posicionOpcion[id_opcion] ?? Object.keys(rendimientoPreguntas[id_pregunta].opciones).length + 1,
                         texto: contenido_opcion,
                         frecuencia: 0
                     };
@@ -266,9 +281,9 @@ export const obtenerRendimientoPorPreguntaService = async (id_examen, fechaInici
                 pregunta: pregunta.pregunta,
                 porcentaje_aciertos: porcentajeAciertos.toFixed(2),
                 texto_pregunta: pregunta.texto_pregunta,
-                opciones: Object.values(pregunta.opciones)
+                opciones: Object.values(pregunta.opciones).sort((a, b) => a.opcion - b.opcion)
             };
-        });
+        }).sort((a, b) => a.pregunta - b.pregunta);
 
 
         if (!intentos) return {
